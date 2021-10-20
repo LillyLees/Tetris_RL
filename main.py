@@ -1,11 +1,20 @@
 import numpy as np
+import pygame
 from numpy import array
 from Tetris import Tetris
+
+
+
 Game = Tetris()
 
-'''for Tet in Game.Tet_Names:
-    print(Tet)
-    for coord in Game.Tetraminos[Tet]:
-        Game.board[coord] = 1
-    print(Game.board)
-    Game.board = array([Game.board_width * [0]] * Game.board_height)''' # Test to see if Tet shapes are right, sucsess
+new_game = Tetris()
+new_game.make_grid()
+while new_game.playing == True:
+    
+    for event in pygame.event.get():  
+        if event.type == pygame.QUIT: 
+            print("aaaaaa") 
+            new_game.playing = False  
+    new_game.Draw_board()
+    new_game.spawn_tet()
+    pygame.display.flip()
