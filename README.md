@@ -1,7 +1,7 @@
 # Tetris_RL
 
 ## creating Tetris
-- [ ] create bored
+- [x] create bored
 - [ ] generate random Tet 
 - [ ] implment scoring and levels 
 - [ ] method takes input in a certain range, that input represents a rotation and line, then hard drops to that line
@@ -18,3 +18,4 @@
 
 ## RL model
 To be filled in later 
+
