@@ -43,6 +43,16 @@ class Tetramino():
         self.rotation_index = 0
         self.moved_x = 0
         self.moved_y = 0
+        self.dropped = False
+
+    def reset_tet(self):
+        self.dropped = False
+        self.x_move = 0
+        self.y_move = 0
+        self.rotation = 0
+        self.rotation_index = 0
+        self.generate_new_tet()
+        self.current_tet = self.get_current_tet()
 
     def get_current_tet_coords(self, roation): #given rotation gets the coordanats for drawing the current tet
             return self.Tetraminos[self.get_current_tet()][roation]
@@ -190,6 +200,4 @@ class Tetris(Tetramino):
     def calculate_score(self,lines_cleared):
             #score += 40 + (lines_cleared + self.level) * self.score_multipler[lines_cleared + 1]
             pass
-    def drop_tetramino(rotation,line):
-            #drop self.tetramino wiith rotation at line 
-            pass
+    
