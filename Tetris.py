@@ -133,43 +133,60 @@ class Tetris(Tetramino):
             y, x = block
             self.board[y][x] = 2
             self.fill_square((23,75,43),x + self.x_move ,y + self.y_move)
+        self.dropped = True
 
     def make_grid(self):
             self.board = [[0 for x in range(10)] for y in range(24)]
 
-    def check_collision(self,y_add, x_add):
-        blocks = self.get_current_tet(self.rotation)
+    def check_collision(self,y_add, x_add, rotation):
+        blocks = self.get_current_tet(rotation)
         for block in blocks:
                 y, x = block
-                if self.board[y+ y_add][x+ x_add] == 1:
+                if self.board[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
                     return True 
         return False
 
+    '''def check_rotation_collision(self,y_add, x_add, rotation):
+        blocks = self.get_current_tet(rotation)
+        for block in blocks:
+                y, x = block
+                if self.board[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
+                    return True 
+        return False'''
+
     def drop_down_one(self):
-        if self.check_collision(1, self.x_move) == False:
+        if self.check_collision(1, 0, self.rotation) == False:
             self.y_move += 1
+        if self.check_collision(1, 0, self.rotation) == True:
+            self.dropped = True
     
     def left_one(self):
-        if self.check_collision(self.y_move, -1) == False:
+        if self.check_collision(0, -1, self.rotation) == False:
             self.x_move -= 1
+        if self.check_collision(1, 0, self.rotation) == True:
+            self.dropped = True
     
     def right_one(self):
-        if self.check_collision(self.y_move, 1) == False:
+        if self.check_collision(0, 1, self.rotation) == False:
             self.x_move += 1
+        if self.check_collision(1, 0, self.rotation) == True:
+            self.dropped = True
 
-    def left_rotation(self):
+    def left_rotation(self): #add check if collision 
         if self.current_tet == "O":
             self.rotation = 0
         elif self.current_tet in ["S","Z","I"]:
             r = [0,90]
             self.rotation_index -= 1
-            self.rotation = r[self.rotation_index]
+            TR = r[self.rotation_index]
         else:
             r = [0, 90, 180, 270]
             self.rotation_index -= 1
-            self.rotation = r[self.rotation_index]
+            TR = r[self.rotation_index]
+        if self.check_collision(0, 0, TR) == False:
+            self.rotation = TR
 
-    def right_rotation(self):
+    def right_rotation(self): #add check if collision
         if self.current_tet == "O":
             self.rotation = 0
         elif self.current_tet in ["S","Z","I"]:
