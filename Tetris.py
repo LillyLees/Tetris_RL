@@ -1,4 +1,4 @@
-import pygame
+mport pygame
 import random
 from pygame.locals import (
     K_UP,
@@ -14,31 +14,68 @@ pygame.init()
 class Tetramino():
     def __init__(self):
         self.x_move, self.y_move = [0,0]
-        self.Tetraminos = {"I": {0 : [(3 +self.x_move, 3 + self.y_move), (3 +self.x_move, 4 + self.y_move), (3+self.x_move, 5 + self.y_move), (3+self.x_move, 6 + self.y_move)], 
-                                90 : [(2 + self.x_move, 5 + self.y_move), (3 + self.x_move, 5 + self.y_move), (4 + self.x_move, 5+self.y_move), (5 +self.x_move, 5+self.y_move)] },
-                    "L": [(1, 3), (1, 4), (1, 5), (0, 5)], #will update l-z later if this works
-                    "J": [(0, 3), (1, 3), (1, 4), (1, 5)],
-                    "T": [(1, 3), (1, 4), (0, 4), (1, 5)],
-                    "O": [(0, 4), (1, 4), (1, 5), (0, 5)],
-                    "S": [(1, 3), (1, 4), (0, 4), (0, 5)],
-                    "Z": [(0, 3), (0, 4), (1, 4), (1, 5)]}
+        self.Tetraminos = {"I": {0 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (3, 6 )], 
+                                90 : [(2 , 5 ), (3 , 5 ), (4 , 5), (5 , 5)] },
+                    "J": {0 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )],
+                    90 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], #not done
+                    180 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], # not done
+                    270 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )]}, # not done
+                    "L": {0 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )],
+                    90 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], #not done
+                    180 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], # not done
+                    270 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )]}, #not
+                    "T": {0 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], #not done
+                    90 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], #not done
+                    180 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], # not done
+                    270 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )]}, #not done
+                    "O": {0 : [(2 , 4), (3 , 4), (3, 5), (2, 5)]}, 
+                    "S": {0 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (3, 6 )], #not done
+                                90 : [(2 , 5 ), (3 , 5 ), (4 , 5), (5 , 5)] }, # not done
+                    "Z": {0 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (3, 6 )], #not done
+                                90 : [(2 , 5 ), (3 , 5 ), (4 , 5), (5 , 5)] }} #not done
       
                          
         self.Bag = ["I", "L", "J", "T", "O", "S", "Z"]
         self.new_tet = random.choice(self.Bag)
         self.currenttet_nexttet = []
         self.current_tet = "I"
+        self.rotation = 0
+        self.rotation_index = 0
+        self.moved_x = 0
+        self.moved_y = 0
+        self.dropped = False
 
-    def get_current_tet(self, roation):
-            return self.Tetraminos[self.current_tet][roation]
+    def reset_tet(self):
+        self.dropped = False
+        self.x_move = 0
+        self.y_move = 0
+        self.rotation = 0
+        self.rotation_index = 0
+        self.generate_new_tet()
+        self.current_tet = self.get_current_tet()
+
+    def get_current_tet_coords(self, roation): #given rotation gets the coordanats for drawing the current tet
+            return self.Tetraminos[self.get_current_tet()][roation]
+
+    def get_current_tet(self): #returns the name of the current tet
+        return  self.currenttet_nexttet[0]
         
-    def testyyy(self):
-            print("ahahaha this works")
+    def get_net_tet(self): #return name of next tet up
+        return self.currenttet_nexttet[1]
+
+    def generate_new_tet(self):
+            if len(self.currenttet_nexttet) == 0: #if the game just started then fill the tet que
+                self.currenttet_nexttet.append(random.choice(self.Bag))
+                self.currenttet_nexttet.append(random.choice(self.Bag))
+            else: #shift second tet to frist tet, generate new second tet
+                self.currenttet_nexttet[0] = self.currenttet_nexttet[1]
+                self.currenttet_nexttet[1] = self.currenttet_nexttet.append(random.choice(self.Bag))
 
 
 class Tetris(Tetramino):
     def __init__(self):
         super(Tetris, self).__init__()
+        self.total_lines_cleared = 0 #number in range 1-10
         self.playing = True
         self.level = 0
         self.score = 0
@@ -72,7 +109,7 @@ class Tetris(Tetramino):
                         self.blockSize])
     
     def spawn_tet(self): #spawns the current tetramino at rotation 0
-        blocks = self.get_current_tet(0)
+        blocks = self.get_current_tet(self.rotation)
         #blocks = self.Tetraminos[self.current_tet][0]
         for block in blocks:
             y, x = block
@@ -80,23 +117,111 @@ class Tetris(Tetramino):
             self.fill_square
             self.fill_square((23,75,43),x,y)
     
+    def tet_hard_drop(self):
+        
+        blocks = self.get_current_tet(self.rotation) #get coordanates of rotated tet
+        hit = False
+        temp_y = 0
+        while hit == False:
+            hit = self.check_collision(temp_y, self.x_move)
+            if hit == True:
+                hit == True
+            else:
+                self.y_move += 1
+        self.y_move += temp_y  
+        for block in blocks:
+            y, x = block
+            self.board[y][x] = 2
+            self.fill_square((23,75,43),x + self.x_move ,y + self.y_move)
+        self.dropped = True
+
     def make_grid(self):
             self.board = [[0 for x in range(10)] for y in range(24)]
 
+    def check_collision(self,y_add, x_add, rotation):
+        blocks = self.get_current_tet(rotation)
+        for block in blocks:
+                y, x = block
+                if self.board[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
+                    return True 
+        return False
+
+    '''def check_rotation_collision(self,y_add, x_add, rotation):
+        blocks = self.get_current_tet(rotation)
+        for block in blocks:
+                y, x = block
+                if self.board[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
+                    return True 
+        return False'''
+
+    def drop_down_one(self):
+        if self.check_collision(1, 0, self.rotation) == False:
+            self.y_move += 1
+        if self.check_collision(1, 0, self.rotation) == True:
+            self.dropped = True
+    
+    def left_one(self):
+        if self.check_collision(0, -1, self.rotation) == False:
+            self.x_move -= 1
+        if self.check_collision(1, 0, self.rotation) == True:
+            self.dropped = True
+    
+    def right_one(self):
+        if self.check_collision(0, 1, self.rotation) == False:
+            self.x_move += 1
+        if self.check_collision(1, 0, self.rotation) == True:
+            self.dropped = True
+
+    def left_rotation(self): #add check if collision 
+        if self.current_tet == "O":
+            self.rotation = 0
+        elif self.current_tet in ["S","Z","I"]:
+            r = [0,90]
+            self.rotation_index -= 1
+            TR = r[self.rotation_index]
+        else:
+            r = [0, 90, 180, 270]
+            self.rotation_index -= 1
+            TR = r[self.rotation_index]
+        if self.check_collision(0, 0, TR) == False:
+            self.rotation = TR
+            if self.check_collision(1, 0, self.rotation) == True:
+                self.dropped = True
+
+    def right_rotation(self): #add check if collision
+        if self.current_tet == "O":
+            self.rotation = 0
+        elif self.current_tet in ["S","Z","I"]:
+            r = [0,90]
+            if self.rotation_index == 1:
+                self.rotation_index = 0
+            else:
+                self.rotation_index += 1
+            TR = r[self.rotation_index]
+        else:
+            r = [0, 90, 180, 270]
+            if self.rotation_index == 3:
+                TR = 0
+            else:
+                self.rotation_index += 1
+            TR = r[self.rotation_index]
+
+        if self.check_collision(0, 0, TR) == False:
+            self.rotation = TR
+            if self.check_collision(1, 0, self.rotation) == True:
+                self.dropped = True
 
     def Pull_Bag(self):
             self.Current_Tet = random.choice(self.Bag)
             return(self.Current_Tet_type)
     def Create_Tet(self):
             self.Current_Tet_shape = self.Tetraminos[self.Current_Tet_type]
+ 
         
-    def lines_cleared(self):
+    def get_lines_cleared(self):
             #get lines cleared 
             #for line in board if line full lines cleared += 1
             pass
     def calculate_score(self,lines_cleared):
             #score += 40 + (lines_cleared + self.level) * self.score_multipler[lines_cleared + 1]
-            pass
-    def drop_tetramino(rotation,line):
-            #drop self.tetramino wiith rotation at line 
             pass
