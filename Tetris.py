@@ -1,4 +1,4 @@
-import pygame
+mport pygame
 import random
 from pygame.locals import (
     K_UP,
@@ -216,6 +216,7 @@ class Tetris(Tetramino):
             return(self.Current_Tet_type)
     def Create_Tet(self):
             self.Current_Tet_shape = self.Tetraminos[self.Current_Tet_type]
+ 
         
     def get_lines_cleared(self):
             #get lines cleared 
@@ -224,4 +225,7 @@ class Tetris(Tetramino):
     def calculate_score(self,lines_cleared):
             #score += 40 + (lines_cleared + self.level) * self.score_multipler[lines_cleared + 1]
             pass
+<<<<<<< HEAD
     
+=======
+>>>>>>> 9216c16fe43807d7dd2fbb11c6ae317a2c7f92f3

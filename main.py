@@ -15,7 +15,7 @@ while new_game.playing == True:
             new_game.playing = False 
     move = [] #array of two moves 
     #possible moves: 
-    #H hard dropgit merge --abort
+    #H hard drop
     #L left one
     #R right one
     #RL rotate left
