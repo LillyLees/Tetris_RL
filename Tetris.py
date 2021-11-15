@@ -39,12 +39,27 @@ class Tetramino():
         self.new_tet = random.choice(self.Bag)
         self.currenttet_nexttet = []
         self.current_tet = "I"
+        self.rotation = 0
+        self.rotation_index = 0
+        self.moved_x = 0
+        self.moved_y = 0
 
-    def get_current_tet(self, roation):
-            return self.Tetraminos[self.current_tet][roation]
+    def get_current_tet_coords(self, roation): #given rotation gets the coordanats for drawing the current tet
+            return self.Tetraminos[self.get_current_tet()][roation]
+
+    def get_current_tet(self): #returns the name of the current tet
+        return  self.currenttet_nexttet[0]
         
-    def testyyy(self):
-            print("ahahaha this works")
+    def get_net_tet(self): #return name of next tet up
+        return self.currenttet_nexttet[1]
+
+    def generate_new_tet(self):
+            if len(self.currenttet_nexttet) == 0: #if the game just started then fill the tet que
+                self.currenttet_nexttet.append(random.choice(self.Bag))
+                self.currenttet_nexttet.append(random.choice(self.Bag))
+            else: #shift second tet to frist tet, generate new second tet
+                self.currenttet_nexttet[0] = self.currenttet_nexttet[1]
+                self.currenttet_nexttet[1] = self.currenttet_nexttet.append(random.choice(self.Bag))
 
 
 class Tetris(Tetramino):
@@ -84,7 +99,7 @@ class Tetris(Tetramino):
                         self.blockSize])
     
     def spawn_tet(self): #spawns the current tetramino at rotation 0
-        blocks = self.get_current_tet(0)
+        blocks = self.get_current_tet(self.rotation)
         #blocks = self.Tetraminos[self.current_tet][0]
         for block in blocks:
             y, x = block
@@ -92,18 +107,75 @@ class Tetris(Tetramino):
             self.fill_square
             self.fill_square((23,75,43),x,y)
     
-    def temp_tet_drop(self):
+    def tet_hard_drop(self):
         
-        blocks = self.get_current_tet(90)
-        #blocks = self.Tetraminos[self.current_tet][0]
+        blocks = self.get_current_tet(self.rotation) #get coordanates of rotated tet
+        hit = False
+        temp_y = 0
+        while hit == False:
+            hit = self.check_collision(temp_y, self.x_move)
+            if hit == True:
+                hit == True
+            else:
+                self.y_move += 1
+        self.y_move += temp_y  
         for block in blocks:
             y, x = block
             self.board[y][x] = 2
-            self.fill_square((23,75,43),x + 4 ,y + 17)
+            self.fill_square((23,75,43),x + self.x_move ,y + self.y_move)
 
     def make_grid(self):
             self.board = [[0 for x in range(10)] for y in range(24)]
 
+    def check_collision(self,y_add, x_add):
+        blocks = self.get_current_tet(self.rotation)
+        for block in blocks:
+                y, x = block
+                if self.board[y+ y_add][x+ x_add] == 1:
+                    return True 
+        return False
+
+    def drop_down_one(self):
+        if self.check_collision(1, self.x_move) == False:
+            self.y_move += 1
+    
+    def left_one(self):
+        if self.check_collision(self.y_move, -1) == False:
+            self.x_move -= 1
+    
+    def right_one(self):
+        if self.check_collision(self.y_move, 1) == False:
+            self.x_move += 1
+
+    def left_rotation(self):
+        if self.current_tet == "O":
+            self.rotation = 0
+        elif self.current_tet in ["S","Z","I"]:
+            r = [0,90]
+            self.rotation_index -= 1
+            self.rotation = r[self.rotation_index]
+        else:
+            r = [0, 90, 180, 270]
+            self.rotation_index -= 1
+            self.rotation = r[self.rotation_index]
+
+    def right_rotation(self):
+        if self.current_tet == "O":
+            self.rotation = 0
+        elif self.current_tet in ["S","Z","I"]:
+            r = [0,90]
+            if self.rotation_index == 1:
+                self.rotation_index = 0
+            else:
+                self.rotation_index += 1
+            self.rotation = r[self.rotation_index]
+        else:
+            r = [0, 90, 180, 270]
+            if self.rotation_index == 3:
+                self.rotation_index = 0
+            else:
+                self.rotation_index += 1
+            self.rotation = r[self.rotation_index]
 
     def Pull_Bag(self):
             self.Current_Tet = random.choice(self.Bag)
