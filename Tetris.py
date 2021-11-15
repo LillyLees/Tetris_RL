@@ -185,6 +185,8 @@ class Tetris(Tetramino):
             TR = r[self.rotation_index]
         if self.check_collision(0, 0, TR) == False:
             self.rotation = TR
+            if self.check_collision(1, 0, self.rotation) == True:
+                self.dropped = True
 
     def right_rotation(self): #add check if collision
         if self.current_tet == "O":
@@ -195,14 +197,19 @@ class Tetris(Tetramino):
                 self.rotation_index = 0
             else:
                 self.rotation_index += 1
-            self.rotation = r[self.rotation_index]
+            TR = r[self.rotation_index]
         else:
             r = [0, 90, 180, 270]
             if self.rotation_index == 3:
-                self.rotation_index = 0
+                TR = 0
             else:
                 self.rotation_index += 1
-            self.rotation = r[self.rotation_index]
+            TR = r[self.rotation_index]
+
+        if self.check_collision(0, 0, TR) == False:
+            self.rotation = TR
+            if self.check_collision(1, 0, self.rotation) == True:
+                self.dropped = True
 
     def Pull_Bag(self):
             self.Current_Tet = random.choice(self.Bag)
