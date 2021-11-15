@@ -13,7 +13,13 @@ while new_game.playing == True:
     for event in pygame.event.get():  
         if event.type == pygame.QUIT: 
             new_game.playing = False 
-    move = []
+    move = [] #array of two moves 
+    #possible moves: 
+    #H hard dropgit merge --abort
+    #L left one
+    #R right one
+    #RL rotate left
+    #RR rotate right 
     if move == "H":
         new_game.tet_hard_drop()
     new_game.Draw_board()
