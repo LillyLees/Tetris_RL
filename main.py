@@ -13,6 +13,9 @@ while new_game.playing == True:
     for event in pygame.event.get():  
         if event.type == pygame.QUIT: 
             new_game.playing = False 
+    move = []
+    if move == "H":
+        new_game.tet_hard_drop()
     new_game.Draw_board()
     new_game.spawn_tet()
     if new_game.dropped == True:
