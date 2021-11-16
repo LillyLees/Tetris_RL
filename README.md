@@ -2,9 +2,10 @@
 
 ## creating Tetris
 - [x] create bored
-- [ ] generate random Tet 
+- [X] generate random Tet 
 - [ ] implment scoring and levels 
-- [ ] method takes input in a certain range, that input represents a rotation and line, then hard drops to that line
+- [ ] finish coords for all tets
+- [X] movement methods
 ### Test by making a default choice depending on what Tet is currently avialable 
 - [ ] compleated
 
@@ -13,6 +14,7 @@
 - [ ] get mind height
 - [ ] Get score 
 - [ ] het bumpyness 
+
 ### Test by making a a formula that based on hurtisics and Tet a certain rotation and line is chosen
 - [ ] compleated
 
