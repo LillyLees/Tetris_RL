@@ -14,25 +14,31 @@ pygame.init()
 class Tetramino():
     def __init__(self):
         self.x_move, self.y_move = [0,0]
-        self.Tetraminos = {"I": {0 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (3, 6 )], 
-                                90 : [(2 , 5 ), (3 , 5 ), (4 , 5), (5 , 5)] },
-                    "J": {0 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )],
-                    90 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], #not done
-                    180 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], # not done
-                    270 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )]}, # not done
-                    "L": {0 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )],
-                    90 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], #not done
-                    180 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], # not done
-                    270 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )]}, #not
-                    "T": {0 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], #not done
-                    90 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], #not done
-                    180 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )], # not done
-                    270 :[(3 , 3 ), (3 , 4 ), (3, 5 ), (2 , 3 )]}, #not done
-                    "O": {0 : [(2 , 4), (3 , 4), (3, 5), (2, 5)]}, 
-                    "S": {0 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (3, 6 )], #not done
-                                90 : [(2 , 5 ), (3 , 5 ), (4 , 5), (5 , 5)] }, # not done
-                    "Z": {0 : [(3 , 3 ), (3 , 4 ), (3, 5 ), (3, 6 )], #not done
-                                90 : [(2 , 5 ), (3 , 5 ), (4 , 5), (5 , 5)] }} #not done
+        self.Tetraminos = {"I": {0 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [3, 6 ]], 
+                                90 : [[2 , 5 ], [3 , 5 ], [4 , 5], [5 , 5]] },
+
+                    "J": {0 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]],
+                    90 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], #not done
+                    180 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], # not done
+                    270 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]]}, # not done
+
+                    "L": {0 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]],
+                    90 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], #not done
+                    180 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], # not done
+                    270 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]]}, #not
+
+                    "T": {0 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], #not done
+                    90 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], #not done
+                    180 :[[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], # not done
+                    270 :[[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]]}, #not done
+
+                    "O": {0 : [[2 , 4], [3 , 4], [3, 5], [2, 5]]}, 
+
+                    "S": {0 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], #not done
+                                90 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]] }, # not done
+
+                    "Z": {0 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], #not done
+                                90 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]] }} #not done
       
                          
         self.Bag = ["I", "L", "J", "T", "O", "S", "Z"]
@@ -87,8 +93,8 @@ class Tetris(Tetramino):
         self.blockSize = 20 #20 scale factor for dimensions 
         self.bit_map = []
         self.screen = pygame.display.set_mode([self.board_width, self.board_height])
-        movement_dict = {"H" : tet_hard_drop(), "L" : left_one(), "R" : right_one(), 
-        "RL" : left_rotation(), "RR" : right_rotation()}
+        movement_dict = {"H" : self.tet_hard_drop, "L" : self.left_one, "R" : self.right_one, 
+        "RL" : self.left_rotation, "RR" : self.right_rotation}
 
     def Draw_board(self):
             self.screen = pygame.display.set_mode([self.board_width, self.board_height]) 
@@ -113,7 +119,7 @@ class Tetris(Tetramino):
                         self.blockSize])
     
     def spawn_tet(self): #spawns the current tetramino at rotation 0
-        blocks = self.get_current_tet(self.rotation)
+        blocks = self.get_current_tet_coords(self.rotation)
         #blocks = self.Tetraminos[self.current_tet][0]
         for block in blocks:
             y, x = block
@@ -123,7 +129,7 @@ class Tetris(Tetramino):
     
     def tet_hard_drop(self):
         
-        blocks = self.get_current_tet(self.rotation) #get coordanates of rotated tet
+        blocks = self.get_current_tet_coords(self.rotation) #get coordanates of rotated tet
         hit = False
         temp_y = 0
         while hit == False:
@@ -143,7 +149,7 @@ class Tetris(Tetramino):
             self.bit_map = [[0 for x in range(10)] for y in range(24)]
 
     def check_collision(self,y_add, x_add, rotation):
-        blocks = self.get_current_tet(rotation)
+        blocks = self.get_current_tet_coords(rotation)
         for block in blocks:
                 y, x = block
                 if self.bit_map[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
@@ -246,17 +252,20 @@ class Tetris(Tetramino):
             self.total_lines_cleared = self.total_lines_cleared - 10 
     
     def place_tet(self):
-        blocks = self.get_current_tet(self.rotation)
+        blocks = self.get_current_tet_coords(self.rotation)
         for block in blocks:
+                print(block)
                 y, x = block
-                y, x += self.y_move, self.x_move
+                y += self.y_move
+                x += self.x_move
                 self.bit_map[y][x] = 1 
     
     def update_tet_position(self):
-        blocks = self.get_current_tet(self.rotation)
+        blocks = self.get_current_tet_coords(self.rotation)
         for block in blocks:
                 y, x = block
-                y, x += self.y_move, self.x_move
+                y += self.y_move
+                x += self.x_move
                 self.bit_map[y][x] = 2
     
     def wipe_old_tet_position(self):
