@@ -282,3 +282,7 @@ class Tetris(Tetramino):
     def get_move(self, move):
         return self.movement_dict[move]
     
+    def check_game_end(self):
+        if 1 in self.bit_map[0]:
+            self.playing = False
+    
