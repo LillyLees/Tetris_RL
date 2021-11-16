@@ -14,13 +14,13 @@ pygame.init()
 class Tetramino():
     def __init__(self):
         self.x_move, self.y_move = [0,0]
-        self.Tetraminos = {"I": {0 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [3, 6 ]], 
+        self.Tetraminos = {"I": {0 : [[2 , 3 ], [2 , 4 ], [2, 5 ], [2, 6 ]], 
                                 90 : [[2 , 5 ], [3 , 5 ], [4 , 5], [5 , 5]] },
 
-                    "J": {0 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]],
-                    90 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], #not done
-                    180 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], # not done
-                    270 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]]}, # not done
+                    "J": {0 :[[2 , 3 ], [2 , 4 ], [2, 5 ], [3 , 5 ]],
+                    90 : [[2 , 4 ], [3 , 4 ], [4, 4 ], [4 , 3 ]], 
+                    180 :[[2 , 3 ], [3 , 3 ], [3, 4 ], [3 , 5]], 
+                    270 :[[2 , 3 ], [2 , 4 ], [3, 3 ], [4 , 3 ]]}, 
 
                     "L": {0 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]],
                     90 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], #not done
@@ -34,8 +34,8 @@ class Tetramino():
 
                     "O": {0 : [[2 , 4], [3 , 4], [3, 5], [2, 5]]}, 
 
-                    "S": {0 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], #not done
-                                90 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]] }, # not done
+                    "S": {0 : [[2 , 5 ], [2 , 6],[3, 5 ], [3 , 4]], 
+                        90 : [[3 , 4 ], [2 , 4 ],[3, 5 ], [4 , 5 ]] }, 
 
                     "Z": {0 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], #not done
                                 90 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]] }} #not done
@@ -62,10 +62,11 @@ class Tetramino():
         self.current_tet = self.get_current_tet()
 
     def get_current_tet_coords(self, roation): #given rotation gets the coordanats for drawing the current tet
-            return self.Tetraminos[self.get_current_tet()][roation]
+            return self.Tetraminos[self.currenttet_nexttet[0]][roation]
+            
 
     def get_current_tet(self): #returns the name of the current tet
-        return  self.currenttet_nexttet[0]
+        return self.currenttet_nexttet[0]
         
     def get_net_tet(self): #return name of next tet up
         return self.currenttet_nexttet[1]
@@ -76,7 +77,7 @@ class Tetramino():
                 self.currenttet_nexttet.append(random.choice(self.Bag))
             else: #shift second tet to frist tet, generate new second tet
                 self.currenttet_nexttet[0] = self.currenttet_nexttet[1]
-                self.currenttet_nexttet[1] = self.currenttet_nexttet.append(random.choice(self.Bag))
+                self.currenttet_nexttet[1] = random.choice(self.Bag)
 
 
 class Tetris(Tetramino):
@@ -254,7 +255,6 @@ class Tetris(Tetramino):
     def place_tet(self):
         blocks = self.get_current_tet_coords(self.rotation)
         for block in blocks:
-                print(block)
                 y, x = block
                 y += self.y_move
                 x += self.x_move
