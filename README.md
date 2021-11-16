@@ -3,7 +3,7 @@
 ## creating Tetris
 - [x] create bored
 - [X] generate random Tet 
-- [ ] implment scoring and levels 
+- [X] implment scoring and levels 
 - [ ] finish coords for all tets
 - [X] movement methods
 ### Test by making a default choice depending on what Tet is currently avialable 
