@@ -30,6 +30,8 @@ while new_game.playing == True:
         new_game.clear_line()  #check if there are any lines cleared, if there are this method also adds to the score and calcualtes a new level
         new_game.reset_tet()
         new_game.spawn_tet()
+    else:
+        new_game.y_move += 1
     
     new_game.redraw_board()
      #redraw board with new moves 
