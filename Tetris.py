@@ -1,4 +1,4 @@
-mport pygame
+import pygame
 import random
 from pygame.locals import (
     K_UP,
@@ -44,6 +44,7 @@ class Tetramino():
         self.moved_x = 0
         self.moved_y = 0
         self.dropped = False
+        self.temp_index = 0
 
     def reset_tet(self):
         self.dropped = False
@@ -173,43 +174,47 @@ class Tetris(Tetramino):
             self.dropped = True
 
     def left_rotation(self): #add check if collision 
+        self.temp_index = self.rotation_index
         if self.current_tet == "O":
             self.rotation = 0
         elif self.current_tet in ["S","Z","I"]:
             r = [0,90]
-            self.rotation_index -= 1
-            TR = r[self.rotation_index]
+            self.temp_index -= 1
+            TR = r[self.temp_index]
         else:
             r = [0, 90, 180, 270]
-            self.rotation_index -= 1
-            TR = r[self.rotation_index]
+            self.temp_index -= 1
+            TR = r[self.temp_index]
         if self.check_collision(0, 0, TR) == False:
             self.rotation = TR
             if self.check_collision(1, 0, self.rotation) == True:
                 self.dropped = True
+                self.rotation_index = self.temp_index
 
     def right_rotation(self): #add check if collision
+        self.temp_index = self.rotation_index
         if self.current_tet == "O":
             self.rotation = 0
         elif self.current_tet in ["S","Z","I"]:
             r = [0,90]
             if self.rotation_index == 1:
-                self.rotation_index = 0
+                self.temp_index = 0
             else:
-                self.rotation_index += 1
-            TR = r[self.rotation_index]
+                self.temp_index += 1
+            TR = r[self.temp_index]
         else:
             r = [0, 90, 180, 270]
             if self.rotation_index == 3:
                 TR = 0
             else:
-                self.rotation_index += 1
-            TR = r[self.rotation_index]
+                self.temp_index += 1
+            TR = r[self.temp_index]
 
         if self.check_collision(0, 0, TR) == False:
             self.rotation = TR
             if self.check_collision(1, 0, self.rotation) == True:
                 self.dropped = True
+                self.rotation_index = self.temp_index
 
     def Pull_Bag(self):
             self.Current_Tet = random.choice(self.Bag)
@@ -225,7 +230,4 @@ class Tetris(Tetramino):
     def calculate_score(self,lines_cleared):
             #score += 40 + (lines_cleared + self.level) * self.score_multipler[lines_cleared + 1]
             pass
-<<<<<<< HEAD
     
-=======
->>>>>>> 9216c16fe43807d7dd2fbb11c6ae317a2c7f92f3
