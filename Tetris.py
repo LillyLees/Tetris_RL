@@ -85,7 +85,7 @@ class Tetris(Tetramino):
         self.board_height = 506
         self.board_width = 222
         self.blockSize = 20 #20 scale factor for dimensions 
-        self.board = []
+        self.bit_map = []
         self.screen = pygame.display.set_mode([self.board_width, self.board_height])
        
 
@@ -95,8 +95,10 @@ class Tetris(Tetramino):
             self.screen.fill((255, 193, 202))
             for row in range(24):
                 for column in range(10):
-                    if self.board[row][column] != 1:
+                    if self.bit_map[row][column] == 0:
                         color = (0,0,0)
+                    elif self.bit_map[row][column] == 2:
+                        color = (24,255,35)
                     else:
                         color = (255,255,255)
                     self.fill_square(color,column,row)
@@ -114,7 +116,7 @@ class Tetris(Tetramino):
         #blocks = self.Tetraminos[self.current_tet][0]
         for block in blocks:
             y, x = block
-            self.board[y][x] = 2
+            self.bit_map[y][x] = 2
             self.fill_square
             self.fill_square((23,75,43),x,y)
     
@@ -132,18 +134,18 @@ class Tetris(Tetramino):
         self.y_move += temp_y  
         for block in blocks:
             y, x = block
-            self.board[y][x] = 2
+            self.bit_map[y][x] = 2
             self.fill_square((23,75,43),x + self.x_move ,y + self.y_move)
         self.dropped = True
 
-    def make_grid(self):
-            self.board = [[0 for x in range(10)] for y in range(24)]
+    def make_bit_map(self):
+            self.bit_map = [[0 for x in range(10)] for y in range(24)]
 
     def check_collision(self,y_add, x_add, rotation):
         blocks = self.get_current_tet(rotation)
         for block in blocks:
                 y, x = block
-                if self.board[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
+                if self.bit_map[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
                     return True 
         return False
 
@@ -214,7 +216,21 @@ class Tetris(Tetramino):
     def Create_Tet(self):
             self.Current_Tet_shape = self.Tetraminos[self.Current_Tet_type]
  
-        
+    def clear_line(self):
+        lines_cleared = 0
+        row_number = -1
+        for row in self.bit_map:
+            row_number += 1
+            if 0 not in row:
+                lines_cleared += 1
+                if row_number == 0:
+                    self.bit_map[row_number] = []
+                else:
+                    self.bit_map[row_number] = self.bit_map[row_number - 1]
+
+
+
+
     def get_lines_cleared(self):
             #get lines cleared 
             #for line in board if line full lines cleared += 1

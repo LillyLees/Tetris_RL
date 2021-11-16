@@ -8,7 +8,8 @@ from Tetris import Tetris
 Game = Tetris()
 
 new_game = Tetris()
-new_game.make_grid()
+new_game.make_bit_map()
+
 while new_game.playing == True:
     for event in pygame.event.get():  
         if event.type == pygame.QUIT: 
