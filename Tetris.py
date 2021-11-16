@@ -223,19 +223,34 @@ class Tetris(Tetramino):
             row_number += 1
             if 0 not in row:
                 lines_cleared += 1
-                if row_number == 0:
-                    self.bit_map[row_number] = []
-                else:
+                if row_number != 0:
                     self.bit_map[row_number] = self.bit_map[row_number - 1]
-
-
-
-
-    def get_lines_cleared(self):
-            #get lines cleared 
-            #for line in board if line full lines cleared += 1
-            pass
+                self.bit_map[0] = [0 for x in range(10)]
+        
+        self.calculate_score(lines_cleared)
+        self.total_lines_cleared = lines_cleared
+        #return lines_cleared
+                
     def calculate_score(self,lines_cleared):
-            #score += 40 + (lines_cleared + self.level) * self.score_multipler[lines_cleared + 1]
+            scores = [40, 100, 300, 1200]
+            self.score += scores[lines_cleared - 1] * (self.level + 1)
             pass
+    
+    def update_level(self):
+        if self.total_lines_cleared >= 10:
+            self.level += 1
+            self.total_lines_cleared = self.total_lines_cleared - 10 
+    
+    def place_tet(self):
+        blocks = self.get_current_tet(self.rotation)
+        for block in blocks:
+                y, x = block
+                y, x += self.y_move, self.x_move
+                self.bit_map[y][x] = 1 
+    def update_tet_position(self):
+        blocks = self.get_current_tet(self.rotation)
+        for block in blocks:
+                y, x = block
+                y, x += self.y_move, self.x_move
+                self.bit_map[y][x] = 2
     
