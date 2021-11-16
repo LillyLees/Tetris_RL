@@ -11,10 +11,11 @@ new_game.make_bit_map()
 while new_game.playing == True:
     for event in pygame.event.get():  
         if event.type == pygame.QUIT: 
-            new_game.playing = False 
+            new_game.playing = False
     
     moves = [] #array of two moves 
     
+    new_game.generate_new_tet() #update tetramino que, if this is the first run itnitlize que with tets
     new_game.Draw_board() # draw current board states, if this is the first run this will be a new peice spawn
 
     for move in moves:
@@ -27,6 +28,8 @@ while new_game.playing == True:
         new_game.reset_tet()
         new_game.spawn_tet()
     
-    new_game.redraw_board() #redraw board with new moves 
+    new_game.redraw_board()
+     #redraw board with new moves 
+    new_game.check_game_end()
     pygame.display.flip()
     #get state, reward, done, action
