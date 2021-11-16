@@ -147,14 +147,6 @@ class Tetris(Tetramino):
                     return True 
         return False
 
-    '''def check_rotation_collision(self,y_add, x_add, rotation):
-        blocks = self.get_current_tet(rotation)
-        for block in blocks:
-                y, x = block
-                if self.board[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
-                    return True 
-        return False'''
-
     def drop_down_one(self):
         if self.check_collision(1, 0, self.rotation) == False:
             self.y_move += 1
