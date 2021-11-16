@@ -1,32 +1,32 @@
 import numpy as np
 import pygame
-from numpy import array
+from numpy import array, left_shift
 from Tetris import Tetris
 
-
-
 Game = Tetris()
-
 new_game = Tetris()
 new_game.make_bit_map()
+
 
 while new_game.playing == True:
     for event in pygame.event.get():  
         if event.type == pygame.QUIT: 
             new_game.playing = False 
-    move = [] #array of two moves 
-    #possible moves: 
-    #H hard drop
-    #L left one
-    #R right one
-    #RL rotate left
-    #RR rotate right 
-    if move == "H":
-        new_game.tet_hard_drop()
-    new_game.Draw_board()
-    new_game.spawn_tet()
-    if new_game.dropped == True:
-        new_game.reset_tet()
+    
+    moves = [] #array of two moves 
+    
+    new_game.Draw_board() # draw current board states, if this is the first run this will be a new peice spawn
 
+    for move in moves:
+        new_game.get_move(move) #loop through each move and make the required changed to the bitmap
+    new_game.update_tet_position()
+
+    if new_game.dropped == True:
+        new_game.place_tet()
+        new_game.clear_line()  #check if there are any lines cleared, if there are this method also adds to the score and calcualtes a new level
+        new_game.reset_tet()
+        new_game.spawn_tet()
+    
+    new_game.redraw_board() #redraw board with new moves 
     pygame.display.flip()
     #get state, reward, done, action

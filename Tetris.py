@@ -87,7 +87,8 @@ class Tetris(Tetramino):
         self.blockSize = 20 #20 scale factor for dimensions 
         self.bit_map = []
         self.screen = pygame.display.set_mode([self.board_width, self.board_height])
-       
+        movement_dict = {"H" : tet_hard_drop(), "L" : left_one(), "R" : right_one(), 
+        "RL" : left_rotation(), "RR" : right_rotation()}
 
     def Draw_board(self):
             self.screen = pygame.display.set_mode([self.board_width, self.board_height]) 
@@ -227,8 +228,11 @@ class Tetris(Tetramino):
                     self.bit_map[row_number] = self.bit_map[row_number - 1]
                 self.bit_map[0] = [0 for x in range(10)]
         
-        self.calculate_score(lines_cleared)
-        self.total_lines_cleared = lines_cleared
+        
+        if lines_cleared > 0:
+            self.calculate_score(lines_cleared)
+            self.total_lines_cleared += lines_cleared
+            self.update_level()
         #return lines_cleared
                 
     def calculate_score(self,lines_cleared):
@@ -247,10 +251,25 @@ class Tetris(Tetramino):
                 y, x = block
                 y, x += self.y_move, self.x_move
                 self.bit_map[y][x] = 1 
+    
     def update_tet_position(self):
         blocks = self.get_current_tet(self.rotation)
         for block in blocks:
                 y, x = block
                 y, x += self.y_move, self.x_move
                 self.bit_map[y][x] = 2
+    
+    def wipe_old_tet_position(self):
+        for row in range(len(self.bit_map)):
+            for square in range(10):
+                if self.bit_map[row][square] == 2:
+                    self.bit_map[row][square] = 0
+    
+    def redraw_board(self):
+        self.wipe_old_tet_position()
+        self.update_tet_position()
+        self.Draw_board()
+
+    def get_move(self, move):
+        return self.movement_dict[move]
     
