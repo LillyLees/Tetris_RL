@@ -94,8 +94,9 @@ class Tetris(Tetramino):
         self.blockSize = 20 #20 scale factor for dimensions 
         self.bit_map = []
         self.screen = pygame.display.set_mode([self.board_width, self.board_height])
-        movement_dict = {"H" : self.tet_hard_drop, "L" : self.left_one, "R" : self.right_one, 
+        self.movement_dict = {"H" : self.tet_hard_drop, "L" : self.left_one, "R" : self.right_one, 
         "RL" : self.left_rotation, "RR" : self.right_rotation}
+        self.last_move = ""
 
     def Draw_board(self):
             self.screen = pygame.display.set_mode([self.board_width, self.board_height]) 
@@ -245,6 +246,10 @@ class Tetris(Tetramino):
     def calculate_score(self,lines_cleared):
             scores = [40, 100, 300, 1200]
             self.score += scores[lines_cleared - 1] * (self.level + 1)
+            if self.last_move == "HD":
+                self.score += 2 * self.y_move
+            else:
+                self.score += self.y_move
             pass
     
     def update_level(self):
