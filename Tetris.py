@@ -44,11 +44,12 @@ class Tetramino():
         self.Bag = ["I", "L", "J", "T", "O", "S", "Z"]
         self.new_tet = random.choice(self.Bag)
         self.currenttet_nexttet = []
-        self.current_tet = "I"
+        self.current_tet = ""
         self.rotation = 0
         self.rotation_index = 0
         self.moved_x = 0
         self.moved_y = 0
+        self.temp_y_move = 0
         self.dropped = False
         self.temp_index = 0
 
@@ -56,6 +57,8 @@ class Tetramino():
         self.dropped = False
         self.x_move = 0
         self.y_move = 0
+        self.temp_y_move = 0
+        self.temp_index = 0
         self.rotation = 0
         self.rotation_index = 0
         self.generate_new_tet()
@@ -78,6 +81,7 @@ class Tetramino():
             else: #shift second tet to frist tet, generate new second tet
                 self.currenttet_nexttet[0] = self.currenttet_nexttet[1]
                 self.currenttet_nexttet[1] = random.choice(self.Bag)
+            self.current_tet = self.currenttet_nexttet[0]
 
 
 class Tetris(Tetramino):
@@ -140,7 +144,8 @@ class Tetris(Tetramino):
                 hit == True
             else:
                 self.y_move += 1
-        self.y_move += temp_y  
+        self.y_move += temp_y
+        self.temp_y_move = temp_y  
         for block in blocks:
             y, x = block
             self.bit_map[y][x] = 2
@@ -247,10 +252,11 @@ class Tetris(Tetramino):
             scores = [40, 100, 300, 1200]
             self.score += scores[lines_cleared - 1] * (self.level + 1)
             if self.last_move == "HD":
-                self.score += 2 * self.y_move
+                self.score += 2 * self.temp_y_move
+                self.score += self.y_move - self.temp_y_move
             else:
                 self.score += self.y_move
-            pass
+            
     
     def update_level(self):
         if self.total_lines_cleared >= 10:
@@ -290,4 +296,5 @@ class Tetris(Tetramino):
     def check_game_end(self):
         if 1 in self.bit_map[0]:
             self.playing = False
+            return False
     

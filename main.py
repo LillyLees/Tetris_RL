@@ -21,7 +21,9 @@ while new_game.playing == True:
     print(new_game.currenttet_nexttet)
     for move in moves:
         new_game.get_move(move) #loop through each move and make the required changed to the bitmap
-
+        new_game.last_move = move
+        if new_game.dropped == True:
+            break
     new_game.update_tet_position()
 
     if new_game.dropped == True:
