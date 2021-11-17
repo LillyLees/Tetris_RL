@@ -14,10 +14,11 @@
 - [ ] get mind height
 - [ ] Get score 
 - [ ] het bumpyness 
+this might not be nessary, instead a bitmap of the board will be outputted as long as the score 
 
 ### Test by making a a formula that based on hurtisics and Tet a certain rotation and line is chosen
 - [ ] compleated
 
 ## RL model
-To be filled in later 
+impliment CNN to analyse numpy array of board 
 
