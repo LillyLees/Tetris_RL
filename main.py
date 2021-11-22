@@ -2,33 +2,41 @@ import numpy as np
 import pygame
 from numpy import array, left_shift
 from Tetris import Tetris
+import time
+
+from agent import Actions
 
 Game = Tetris()
+Agent = Actions()
 new_game = Tetris()
+
 new_game.make_bit_map()
 new_game.generate_new_tet()
 new_game.spawn_tet()
 pygame.font.init()
 
+turns = 5
+
+movement_dict = {"H" : new_game.tet_hard_drop, "L" : new_game.left_one, "R" : new_game.right_one, 
+        "RL" : new_game.left_rotation, "RR" : new_game.right_rotation}
+
+
 
 while new_game.playing == True:
-    for row in new_game.bit_map:
-        print(row)
-    print("\n")
-
-    for event in pygame.event.get():  
-        if event.type == pygame.QUIT: 
-            new_game.playing = False
-    
-    moves = [] #array of two moves 
-    #update tetramino que, if this is the first run itnitlize que with tets
-    new_game.Draw_board() # draw current board states, if this is the first run this will be a new peice spawn
-    for move in moves:
-        new_game.get_move(move) #loop through each move and make the required changed to the bitmap
-        new_game.last_move = move
+    for turn in range(turns): 
+        for event in pygame.event.get():  
+            if event.type == pygame.QUIT: 
+                new_game.playing = False
+        
+        #update tetramino que, if this is the first run itnitlize que with tets
+        new_game.Draw_board() # draw current board states, if this is the first run this will be a new peice spawn
+        move = Agent.get_action()
+        print(move)
+        movement_dict[move]()
+        Agent.state_action.append([move,new_game.bit_map])
         if new_game.dropped == True:
-            break
-    new_game.update_tet_position()
+                break
+        new_game.update_tet_position()
 
     if new_game.dropped != True:
         new_game.drop_down_one()
@@ -43,6 +51,7 @@ while new_game.playing == True:
      #redraw board with new moves 
     new_game.check_game_end() 
     pygame.display.flip()
+    time.sleep(0.5) 
     #get state, reward, done, action
 
 print("GAME OVER")
