@@ -93,19 +93,25 @@ class Tetris(Tetramino):
         self.score = 0
         self.score_multiplier = [40,100,300,1200]
         #The Tets spawn in a 2x4 area laying horazontally
-        self.board_height = 540
-        self.board_width = 222
+        self.board_height = 535
+        #self.board_width = 222
+        self.board_width = 300
         self.blockSize = 20 #20 scale factor for dimensions 
         self.bit_map = []
         self.screen = pygame.display.set_mode([self.board_width, self.board_height])
         self.movement_dict = {"H" : self.tet_hard_drop, "L" : self.left_one, "R" : self.right_one, 
         "RL" : self.left_rotation, "RR" : self.right_rotation}
         self.last_move = ""
+        self.myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
     def Draw_board(self):
             self.screen = pygame.display.set_mode([self.board_width, self.board_height]) 
             pygame.display.set_caption("Reward-tris")
             self.screen.fill((255, 193, 202))
+
+            score_surface = self.myfont.render(str(self.score), True, (0, 0, 0))
+            self.screen.blit(score_surface,(230,10))
+
             for row in range(0,24):
                 for column in range(0,10):
                     if self.bit_map[row][column] == 0:
@@ -115,6 +121,7 @@ class Tetris(Tetramino):
                     else:
                         color = (255,255,255)
                     self.fill_square(color,column,row)
+            
 
     def fill_square(self,color,column,row):
         pygame.draw.rect(self.screen,
@@ -244,16 +251,17 @@ class Tetris(Tetramino):
                     self.bit_map[row_number] = self.bit_map[row_number - 1]
                 self.bit_map[0] = [0 for x in range(10)]
         
-        
-        if lines_cleared > 0:
-            self.calculate_score(lines_cleared)
-            self.total_lines_cleared += lines_cleared
+        self.calculate_score(lines_cleared)
+        self.total_lines_cleared += lines_cleared
+
+        if self.total_lines_cleared > 9:
             self.update_level()
-        #return lines_cleared
+        
                 
     def calculate_score(self,lines_cleared):
             scores = [40, 100, 300, 1200]
-            self.score += scores[lines_cleared - 1] * (self.level + 1)
+            if lines_cleared > 0:
+                self.score += scores[lines_cleared - 1] * (self.level + 1)
             if self.last_move == "HD":
                 self.score += 2 * self.temp_y_move
                 self.score += self.y_move - self.temp_y_move

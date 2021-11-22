@@ -8,6 +8,8 @@ new_game = Tetris()
 new_game.make_bit_map()
 new_game.generate_new_tet()
 new_game.spawn_tet()
+pygame.font.init()
+
 
 while new_game.playing == True:
     for event in pygame.event.get():  
@@ -15,7 +17,6 @@ while new_game.playing == True:
             new_game.playing = False
     
     moves = [] #array of two moves 
-    
     #update tetramino que, if this is the first run itnitlize que with tets
     new_game.Draw_board() # draw current board states, if this is the first run this will be a new peice spawn
     for move in moves:
