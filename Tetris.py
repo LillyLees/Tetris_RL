@@ -99,8 +99,7 @@ class Tetris(Tetramino):
         self.blockSize = 20 #20 scale factor for dimensions 
         self.bit_map = []
         self.screen = pygame.display.set_mode([self.board_width, self.board_height])
-        self.movement_dict = {"H" : self.tet_hard_drop, "L" : self.left_one, "R" : self.right_one, 
-        "RL" : self.left_rotation, "RR" : self.right_rotation}
+        #self.movement_dict = {}
         self.last_move = ""
         self.myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
@@ -141,22 +140,14 @@ class Tetris(Tetramino):
             self.fill_square((23,75,43),x,y)
     
     def tet_hard_drop(self):
-        
-        blocks = self.get_current_tet_coords(self.rotation) #get coordanates of rotated tet
         hit = False
-        temp_y = 0
+        temp_y = -1
         while hit == False:
-            hit = self.check_collision(temp_y, self.x_move)
-            if hit == True:
-                hit == True
-            else:
-                self.y_move += 1
+            temp_y += 1
+            hit = self.check_collision(temp_y + 1, 0, self.rotation)
+            
         self.y_move += temp_y
         self.temp_y_move = temp_y  
-        for block in blocks:
-            y, x = block
-            self.bit_map[y][x] = 2
-            self.fill_square((23,75,43),x + self.x_move ,y + self.y_move)
         self.dropped = True
 
     def make_bit_map(self):
@@ -167,6 +158,8 @@ class Tetris(Tetramino):
         for block in blocks:
                 y, x = block
                 if y + self.y_move + y_add > 23:
+                    return True
+                elif x + self.x_move + x_add > 9:
                     return True
                 elif self.bit_map[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
                     return True
@@ -195,44 +188,46 @@ class Tetris(Tetramino):
         self.temp_index = self.rotation_index
         if self.current_tet == "O":
             self.rotation = 0
-        elif self.current_tet in ["S","Z","I"]:
-            r = [0,90]
-            self.temp_index -= 1
-            TR = r[self.temp_index]
         else:
-            r = [0, 90, 180, 270]
-            self.temp_index -= 1
-            TR = r[self.temp_index]
-        if self.check_collision(0, 0, TR) == False:
-            self.rotation = TR
-            if self.check_collision(1, 0, self.rotation) == True:
-                self.dropped = True
-                self.rotation_index = self.temp_index
+            if self.current_tet in ["S","Z","I"]:
+                r = [0,90]
+                self.temp_index -= 1
+                TR = r[self.temp_index]
+            else:
+                r = [0, 90, 180, 270]
+                self.temp_index -= 1
+                TR = r[self.temp_index]
+            if self.check_collision(0, 0, TR) == False:
+                self.rotation = TR
+                if self.check_collision(1, 0, self.rotation) == True:
+                    self.dropped = True
+                    self.rotation_index = self.temp_index
 
-    def right_rotation(self): #add check if collision
+    def right_rotation(self): 
         self.temp_index = self.rotation_index
         if self.current_tet == "O":
             self.rotation = 0
-        elif self.current_tet in ["S","Z","I"]:
-            r = [0,90]
-            if self.rotation_index == 1:
-                self.temp_index = 0
-            else:
-                self.temp_index += 1
-            TR = r[self.temp_index]
         else:
-            r = [0, 90, 180, 270]
-            if self.rotation_index == 3:
-                TR = 0
+            if self.current_tet in ["S","Z","I"]:
+                r = [0,90]
+                if self.rotation_index == 1:
+                    self.temp_index = 0
+                else:
+                    self.temp_index += 1
+                TR = r[self.temp_index]
             else:
-                self.temp_index += 1
-            TR = r[self.temp_index]
+                r = [0, 90, 180, 270]
+                if self.rotation_index == 3:
+                    TR = 0
+                else:
+                    self.temp_index += 1
+                TR = r[self.temp_index]
 
-        if self.check_collision(0, 0, TR) == False:
-            self.rotation = TR
-            if self.check_collision(1, 0, self.rotation) == True:
-                self.dropped = True
-                self.rotation_index = self.temp_index
+            if self.check_collision(0, 0, TR) == False:
+                self.rotation = TR
+                if self.check_collision(1, 0, self.rotation) == True:
+                    self.dropped = True
+                    self.rotation_index = self.temp_index
 
     def Pull_Bag(self):
             self.Current_Tet = random.choice(self.Bag)
@@ -301,9 +296,6 @@ class Tetris(Tetramino):
         self.update_tet_position()
         self.Draw_board()
 
-    def get_move(self, move):
-        return self.movement_dict[move]
-    
     def check_game_end(self):
         if 1 in self.bit_map[0]:
             self.playing = False
