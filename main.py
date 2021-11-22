@@ -12,6 +12,10 @@ pygame.font.init()
 
 
 while new_game.playing == True:
+    for row in new_game.bit_map:
+        print(row)
+    print("\n")
+
     for event in pygame.event.get():  
         if event.type == pygame.QUIT: 
             new_game.playing = False
@@ -34,8 +38,7 @@ while new_game.playing == True:
         new_game.clear_line()  #check if there are any lines cleared, if there are this method also adds to the score and calcualtes a new level
         new_game.reset_tet()
         new_game.spawn_tet()
-    
-    
+
     new_game.redraw_board()
      #redraw board with new moves 
     new_game.check_game_end() 
