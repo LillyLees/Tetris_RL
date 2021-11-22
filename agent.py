@@ -42,16 +42,15 @@ class NeuralNetwork(nn.Module):
 class Actions(NeuralNetwork):
     def __init__(self):
         super().__init__()
-        self.possible_moves = ["H","L","R","LR","RR"] #Hard drop, Left one, Right one, Left Rotation, Right Rotation
+        self.possible_moves = ["H","L","R","RL","RR"] #Hard drop, Left one, Right one, Left Rotation, Right Rotation
         self.total_moves = 0
-        self.eps = 1
+        #self.eps = 1
+        self.eps = 2
+        self.state_action = []
         
     def pick_random_move(self):
-        moves = []
-        no_moves = random.randint(1,2)
-        for move in range(no_moves):
-            moves.append(random.choice(self.possible_moves))
-        return(moves)
+        moves = random.choice(self.possible_moves)
+        return moves
     
     def get_action(self):
         ran = random.randint(0,100) / 100
@@ -62,7 +61,7 @@ class Actions(NeuralNetwork):
 
     def update_eps(self):
         self.eps = 1 / self.total_moves 
-        
+
     def get_best_action(self):
         pass
     
