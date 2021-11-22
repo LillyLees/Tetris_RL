@@ -18,7 +18,6 @@ while new_game.playing == True:
     
     #update tetramino que, if this is the first run itnitlize que with tets
     new_game.Draw_board() # draw current board states, if this is the first run this will be a new peice spawn
-    print(new_game.currenttet_nexttet)
     for move in moves:
         new_game.get_move(move) #loop through each move and make the required changed to the bitmap
         new_game.last_move = move
@@ -26,17 +25,20 @@ while new_game.playing == True:
             break
     new_game.update_tet_position()
 
+    if new_game.dropped != True:
+        new_game.drop_down_one()
+
     if new_game.dropped == True:
-        new_game.generate_new_tet() 
         new_game.place_tet()
         new_game.clear_line()  #check if there are any lines cleared, if there are this method also adds to the score and calcualtes a new level
         new_game.reset_tet()
         new_game.spawn_tet()
-    else:
-        new_game.y_move += 1
+    
     
     new_game.redraw_board()
      #redraw board with new moves 
     new_game.check_game_end() 
     pygame.display.flip()
     #get state, reward, done, action
+
+print("GAME OVER")

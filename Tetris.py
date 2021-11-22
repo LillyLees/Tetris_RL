@@ -14,16 +14,16 @@ pygame.init()
 class Tetramino():
     def __init__(self):
         self.x_move, self.y_move = [0,0]
-        self.Tetraminos = {"I": {0 : [[2 , 3 ], [2 , 4 ], [2, 5 ], [2, 6 ]], 
-                                90 : [[2 , 5 ], [3 , 5 ], [4 , 5], [5 , 5]] },
+        self.Tetraminos = {"I": {0 : [[0 , 3 ], [0 , 4 ], [0, 5 ], [0, 6 ]], 
+                                90 : [[0 , 5 ], [1 , 5 ], [2 , 5], [3 , 5]] },
 
-                    "J": {0 :[[2 , 3 ], [2 , 4 ], [2, 5 ], [3 , 5 ]],
-                    90 : [[2 , 4 ], [3 , 4 ], [4, 4 ], [4 , 3 ]], 
-                    180 :[[2 , 3 ], [3 , 3 ], [3, 4 ], [3 , 5]], 
-                    270 :[[2 , 3 ], [2 , 4 ], [3, 3 ], [4 , 3 ]]}, 
+                    "J": {0 :[[0 , 3 ], [0 , 4 ], [0, 5 ], [1 , 5 ]],
+                    90 : [[0 , 4 ], [1 , 4 ], [2, 4 ], [2 , 3 ]], 
+                    180 :[[0 , 3 ], [1 , 3 ], [1, 4 ], [1 , 5]], 
+                    270 :[[0 , 3 ], [0 , 4 ], [1, 3 ], [2 , 3 ]]}, 
 
-                    "L": {0 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]],
-                    90 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], #not done
+                    "L": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [0 , 3 ]],
+                    90 : [[1 , 3 ], [1 , 4 ], [3, 5 ], [2 , 3 ]], #not done
                     180 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], # not done
                     270 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]]}, #not
 
@@ -32,13 +32,13 @@ class Tetramino():
                     180 :[[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], # not done
                     270 :[[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]]}, #not done
 
-                    "O": {0 : [[2 , 4], [3 , 4], [3, 5], [2, 5]]}, 
+                    "O": {0 : [[0 , 4], [1 , 4], [1, 5], [0, 5]]}, 
 
-                    "S": {0 : [[2 , 5 ], [2 , 6],[3, 5 ], [3 , 4]], 
-                        90 : [[3 , 4 ], [2 , 4 ],[3, 5 ], [4 , 5 ]] }, 
+                    "S": {0 : [[0 , 5 ], [0 , 6],[1, 5 ], [1 , 4]], 
+                        90 : [[1 , 4 ], [0 , 4 ],[1, 5 ], [2 , 5 ]] }, 
 
-                    "Z": {0 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], #not done
-                                90 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]] }} #not done
+                    "Z": {0 : [[1 , 5 ], [1 , 6],[0, 5 ], [0 , 4]],
+                                90 : [[1 , 5 ], [0 , 5],[1, 4 ], [2 , 4 ]] }} 
       
                          
         self.Bag = ["I", "L", "J", "T", "O", "S", "Z"]
@@ -93,7 +93,7 @@ class Tetris(Tetramino):
         self.score = 0
         self.score_multiplier = [40,100,300,1200]
         #The Tets spawn in a 2x4 area laying horazontally
-        self.board_height = 506
+        self.board_height = 540
         self.board_width = 222
         self.blockSize = 20 #20 scale factor for dimensions 
         self.bit_map = []
@@ -106,8 +106,8 @@ class Tetris(Tetramino):
             self.screen = pygame.display.set_mode([self.board_width, self.board_height]) 
             pygame.display.set_caption("Reward-tris")
             self.screen.fill((255, 193, 202))
-            for row in range(24):
-                for column in range(10):
+            for row in range(0,24):
+                for column in range(0,10):
                     if self.bit_map[row][column] == 0:
                         color = (0,0,0)
                     elif self.bit_map[row][column] == 2:
@@ -159,8 +159,11 @@ class Tetris(Tetramino):
         blocks = self.get_current_tet_coords(rotation)
         for block in blocks:
                 y, x = block
-                if self.bit_map[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
-                    return True 
+                if y + self.y_move + y_add > 23:
+                    return True
+                elif self.bit_map[y+ self.y_move + y_add][x+ self.x_move +x_add] == 1:
+                    return True
+                
         return False
 
     def drop_down_one(self):
@@ -298,3 +301,5 @@ class Tetris(Tetramino):
             self.playing = False
             return False
     
+    def reward(self):
+        pass
