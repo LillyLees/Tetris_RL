@@ -14,30 +14,30 @@ pygame.init()
 class Tetramino():
     def __init__(self):
         self.x_move, self.y_move = [0,0]
-        self.Tetraminos = {"I": {0 : [[0 , 3 ], [0 , 4 ], [0, 5 ], [0, 6 ]], 
+        self.Tetraminos = {"I": {0 : [[2 , 3 ], [2 , 4 ], [2, 5 ], [2, 6 ]], 
                                 90 : [[0 , 5 ], [1 , 5 ], [2 , 5], [3 , 5]] },
 
-                    "J": {0 :[[0 , 3 ], [0 , 4 ], [0, 5 ], [1 , 5 ]],
+                    "J": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 5 ]], 
                     90 : [[0 , 4 ], [1 , 4 ], [2, 4 ], [2 , 3 ]], 
                     180 :[[0 , 3 ], [1 , 3 ], [1, 4 ], [1 , 5]], 
                     270 :[[0 , 3 ], [0 , 4 ], [1, 3 ], [2 , 3 ]]}, 
 
-                    "L": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [0 , 3 ]],
-                    90 : [[1 , 3 ], [1 , 4 ], [3, 5 ], [2 , 3 ]], #not done
-                    180 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], # not done
-                    270 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]]}, #not
+                    "L": {0 :[[2 , 3 ], [1 , 4 ], [1, 5 ], [2 , 3 ]], 
+                    90 : [[0 , 3 ], [0 , 4 ], [1, 4 ], [2 , 4]], 
+                    180 :[[1 , 5 ], [2 , 4 ], [2, 5 ], [2 , 3 ]], 
+                    270 :[[0 , 4 ], [1 , 4 ], [3, 4 ], [3 , 5 ]]},
 
-                    "T": {0 :[[3 , 3 ], [3 , 4 ], [3, 5 ], [2 , 3 ]], #not done
-                    90 : [[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], #not done
-                    180 :[[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]], # not done
-                    270 :[[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 3 ]]}, #not done
+                    "T": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 4 ]], 
+                    90 : [[0 , 4 ], [1 , 4 ],[1, 3], [2 , 4 ]], 
+                    180 :[[2 , 3 ], [2 , 4 ],[2, 5 ], [1 , 4 ]], 
+                    270 :[[0 , 4 ], [1 , 4 ],[1, 5 ], [2 , 4]]}, 
 
-                    "O": {0 : [[0 , 4], [1 , 4], [1, 5], [0, 5]]}, 
+                    "O": {0 : [[1 , 4], [2 , 4], [2, 5], [1, 5]]}, 
 
-                    "S": {0 : [[0 , 5 ], [0 , 6],[1, 5 ], [1 , 4]], 
+                    "S": {0 : [[1 , 5 ], [1 , 6],[2, 5 ], [2 , 4]], 
                         90 : [[1 , 4 ], [0 , 4 ],[1, 5 ], [2 , 5 ]] }, 
 
-                    "Z": {0 : [[1 , 5 ], [1 , 6],[0, 5 ], [0 , 4]],
+                    "Z": {0 : [[2 , 5 ], [2 , 6],[1, 5 ], [1 , 4]], 
                                 90 : [[1 , 5 ], [0 , 5],[1, 4 ], [2 , 4 ]] }} 
       
                          
@@ -48,7 +48,7 @@ class Tetramino():
         self.rotation = 0
         self.rotation_index = 0
         self.moved_x = 0
-        self.moved_y = 0
+        self.moved_y = -1
         self.temp_y_move = 0
         self.dropped = False
         self.temp_index = 0
@@ -56,7 +56,7 @@ class Tetramino():
     def reset_tet(self):
         self.dropped = False
         self.x_move = 0
-        self.y_move = 0
+        self.y_move = -1
         self.temp_y_move = 0
         self.temp_index = 0
         self.rotation = 0
@@ -94,12 +94,10 @@ class Tetris(Tetramino):
         self.score_multiplier = [40,100,300,1200]
         #The Tets spawn in a 2x4 area laying horazontally
         self.board_height = 535
-        #self.board_width = 222
         self.board_width = 300
         self.blockSize = 20 #20 scale factor for dimensions 
         self.bit_map = []
         self.screen = pygame.display.set_mode([self.board_width, self.board_height])
-        #self.movement_dict = {}
         self.last_move = ""
         self.myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
@@ -135,9 +133,9 @@ class Tetris(Tetramino):
         #blocks = self.Tetraminos[self.current_tet][0]
         for block in blocks:
             y, x = block
-            self.bit_map[y][x] = 2
+            self.bit_map[y + self.y_move][x] = 2
             self.fill_square
-            self.fill_square((23,75,43),x,y)
+            self.fill_square((23,75,43),x,y + self.y_move)
     
     def tet_hard_drop(self):
         hit = False
