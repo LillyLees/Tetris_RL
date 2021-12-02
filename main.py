@@ -27,7 +27,7 @@ while new_game.playing == True:
                 new_game.playing = False
         #update tetramino que, if this is the first run itnitlize que with tets
         new_game.Draw_board() # draw current board states, if this is the first run this will be a new peice spawn
-        Agent.current_game_state = new_game.bit_map
+        Agent.update_current_state(new_game.current_tet, new_game.bit_map, new_game.score)
         move = Agent.get_action()
         movement_dict[move]()
         Agent.state_action.append([move,new_game.bit_map])

@@ -56,15 +56,15 @@ class DQN(nn.Module): #deep Q network class
         return x
 
 
-class Actions(NeuralNetwork):
+class Agent(DQN, ReplayMemory):
     def __init__(self):
         super().__init__()
         self.possible_moves = ["H","L","R","RL","RR"] #Hard drop, Left one, Right one, Left Rotation, Right Rotation
         self.total_moves = 0
         #self.eps = 1
         self.eps = 2
-        self.state_action = []
-        self.current_game_state = None
+        self.current_state = []
+        
         
     def pick_random_move(self):
         moves = random.choice(self.possible_moves)
@@ -83,7 +83,11 @@ class Actions(NeuralNetwork):
     def get_best_action(self):
         pass
 
-    def add_memory(self,current_state, next_state, reward, finished):
+    def update_current_state(self, current_tet, board, score):
+        self.current_state.append(current_tet)
+        self.current_state.append(board)
+        self.current_state.append(score)
+
 
     
 
