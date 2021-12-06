@@ -19,13 +19,13 @@ class Tetramino():
 
                     "J": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 5 ]], 
                     90 : [[0 , 4 ], [1 , 4 ], [2, 4 ], [2 , 3 ]], 
-                    180 :[[0 , 3 ], [1 , 3 ], [1, 4 ], [1 , 5]], 
-                    270 :[[0 , 3 ], [0 , 4 ], [1, 3 ], [2 , 3 ]]}, 
+                    180 :[[1 , 3 ], [2 , 4 ], [2, 5 ], [2 , 3 ]], 
+                    270 :[[0 , 4 ], [1 , 4 ], [2, 4 ], [0 , 5 ]]}, 
 
-                    "L": {0 :[[2 , 3 ], [1 , 4 ], [1, 5 ], [2 , 3 ]], 
-                    90 : [[0 , 3 ], [0 , 4 ], [1, 4 ], [2 , 4]], 
+                    "L": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 3 ]], 
+                    90 : [[0 , 3 ], [1 , 4 ], [2, 4 ], [0 , 4]], 
                     180 :[[1 , 5 ], [2 , 4 ], [2, 5 ], [2 , 3 ]], 
-                    270 :[[0 , 4 ], [1 , 4 ], [3, 4 ], [3 , 5 ]]},
+                    270 :[[0 , 4 ], [1 , 4 ], [2, 4 ], [2 , 5 ]]},
 
                     "T": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 4 ]], 
                     90 : [[0 , 4 ], [1 , 4 ],[1, 3], [2 , 4 ]], 
@@ -34,11 +34,11 @@ class Tetramino():
 
                     "O": {0 : [[1 , 4], [2 , 4], [2, 5], [1, 5]]}, 
 
-                    "S": {0 : [[1 , 5 ], [1 , 6],[2, 5 ], [2 , 4]], 
-                        90 : [[1 , 4 ], [0 , 4 ],[1, 5 ], [2 , 5 ]] }, 
+                    "S": {0 : [[1 , 5], [1 , 4],[2, 3 ], [2 , 4]], 
+                        90 : [[0 , 3 ], [1 , 3 ],[1, 5 ], [2 , 4 ]] }, 
 
-                    "Z": {0 : [[2 , 5 ], [2 , 6],[1, 5 ], [1 , 4]], 
-                                90 : [[1 , 5 ], [0 , 5],[1, 4 ], [2 , 4 ]] }} 
+                    "Z": {0 : [[1 , 3 ], [1, 4],[2, 4 ], [2 , 5]], 
+                                90 : [[0 , 5 ], [1 , 5],[1, 4 ], [2 , 4 ]] }} 
       
                          
         self.Bag = ["I", "L", "J", "T", "O", "S", "Z"]
@@ -91,6 +91,7 @@ class Tetris(Tetramino):
         self.playing = True
         self.level = 0
         self.score = 0
+        self.temp_score = 0
         self.score_multiplier = [40,100,300,1200]
         #The Tets spawn in a 2x4 area laying horazontally
         self.board_height = 535
@@ -108,6 +109,10 @@ class Tetris(Tetramino):
 
             score_surface = self.myfont.render(str(self.score), True, (0, 0, 0))
             self.screen.blit(score_surface,(230,10))
+
+            level_surface = self.myfont.render(str(self.level), True, (0, 0, 0))
+            self.screen.blit(level_surface,(230,40))
+
 
             for row in range(0,24):
                 for column in range(0,10):
@@ -130,7 +135,6 @@ class Tetris(Tetramino):
     
     def spawn_tet(self): #spawns the current tetramino at rotation 0
         blocks = self.get_current_tet_coords(self.rotation)
-        #blocks = self.Tetraminos[self.current_tet][0]
         for block in blocks:
             y, x = block
             self.bit_map[y + self.y_move][x] = 2
@@ -300,4 +304,7 @@ class Tetris(Tetramino):
             return False
     
     def reward(self):
-        pass
+        return self.score - self.temp_score
+    
+    def game_states(self):
+        return [self.current_tet, self.bit_map, self.score]

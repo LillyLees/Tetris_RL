@@ -12,19 +12,7 @@ import torch.nn.functional as F
 import torchvision.transforms as T
 
 Transition = namedtuple('Transition',
-                        ('state', 'action', 'next_state', 'reward')) #represents a transition from state action, to next_state and reward 
-class ReplayMemory():
-    def __init__(self, size):
-        self.memory = deque([],maxlen=size) #creating a memory que of our deffined size 
-    
-    def push(self, states):
-        self.memory.append(Transition(states)) #save a certain transition in reply memory
-
-    def sample(self, sample_size):
-        return random.sample(self.memory, sample_size) #returns a random batch of memory of deffined sample size for tranining
-
-    def current_len(self):
-        return len(self.memory) #return the current size of reply memory
+                        ('state', 'action', 'next_state', 'reward', 'done')) #represents a transition from state action, to next_state and reward 
 
 
 
@@ -56,14 +44,15 @@ class DQN(nn.Module): #deep Q network class
         return x
 
 
-class Agent(DQN, ReplayMemory):
+class Agent(DQN):
     def __init__(self):
-        super().__init__()
+        super(Agent, self).__init__()
         self.possible_moves = ["H","L","R","RL","RR"] #Hard drop, Left one, Right one, Left Rotation, Right Rotation
         self.total_moves = 0
         #self.eps = 1
         self.eps = 2
         self.current_state = []
+        self.memory = []
         
         
     def pick_random_move(self):
@@ -83,10 +72,17 @@ class Agent(DQN, ReplayMemory):
     def get_best_action(self):
         pass
 
-    def update_current_state(self, current_tet, board, score):
-        self.current_state.append(current_tet)
-        self.current_state.append(board)
-        self.current_state.append(score)
+    def update_current_state(self, states):
+        self.current_state = states
+    
+    def memory_push(self, states):
+        self.memory.append(Transition(states[0],states[1],states[2],states[3],states[4])) #save a certain transition in reply memory
+
+    def sample(self, sample_size):
+        return random.sample(self.memory, sample_size) #returns a random batch of memory of deffined sample size for tranining
+
+    def current_len(self):
+        return len(self.memory) #return the current size of reply memory
 
 
     
