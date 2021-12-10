@@ -92,6 +92,9 @@ class Agent(DQN):
         #optimizer = optim.Adam(self.parameters(), lr=1e-6)
         criterion = nn.MSELoss() 
         image_data, reward, terminal = self.memory[-1][-3:]
+        for state in range(len(self.memory)):
+            #print(self.memory[state])
+            pass
 
 agent = Agent()
 

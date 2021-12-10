@@ -24,5 +24,17 @@ this might not be nessary, instead a bitmap of the board will be outputted as lo
 - [X] create state action que
 - [X] implement greedy epsilon stratagy
 - [X] start on CNN
+- [X] create training loop in game loop
+- [X] allow user to deffine weather agent trains
+- [X] allow user to deffine how many rounds the Agent plays 
+- [X] Agents traning is saved even if main is rum multiple times 
+- [ ] When train method is called each element in the replay memeory is iterated thorough 
+- [ ] sample mini batches from reply memory 
+- [ ] generate Q values for each action - state pair
+
 impliment CNN to analyse numpy array of board 
+
+game state function should return score and board not current tet
+current tet should not be stored in the transition it should only be used as input to the NN 
+running lots at same times 
 
