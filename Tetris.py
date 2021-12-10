@@ -30,12 +30,12 @@ class Tetramino():
                     "T": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 4 ]], 
                     90 : [[0 , 4 ], [1 , 4 ],[1, 3], [2 , 4 ]], 
                     180 :[[2 , 3 ], [2 , 4 ],[2, 5 ], [1 , 4 ]], 
-                    270 :[[0 , 4 ], [1 , 4 ],[1, 5 ], [2 , 4]]}, 
+                    270 :[[0 , 4 ], [1 , 4 ],[1, 5 ], [1 , 3]]}, 
 
                     "O": {0 : [[1 , 4], [2 , 4], [2, 5], [1, 5]]}, 
 
                     "S": {0 : [[1 , 5], [1 , 4],[2, 3 ], [2 , 4]], 
-                        90 : [[0 , 3 ], [1 , 3 ],[1, 5 ], [2 , 4 ]] }, 
+                        90 : [[0 , 4 ], [1 , 4 ],[1, 5 ], [2 , 5 ]] }, 
 
                     "Z": {0 : [[1 , 3 ], [1, 4],[2, 4 ], [2 , 5]], 
                                 90 : [[0 , 5 ], [1 , 5],[1, 4 ], [2 , 4 ]] }} 
@@ -307,4 +307,4 @@ class Tetris(Tetramino):
         return self.score - self.temp_score
     
     def game_states(self):
-        return [self.current_tet, self.bit_map, self.score]
+        return [self.current_tet, self.bit_map, self.score] #change so not current tet

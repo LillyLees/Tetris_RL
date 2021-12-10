@@ -49,19 +49,22 @@ class Agent(DQN):
         super(Agent, self).__init__()
         self.possible_moves = ["H","L","R","RL","RR"] #Hard drop, Left one, Right one, Left Rotation, Right Rotation
         self.total_moves = 0
-        #self.eps = 1
-        self.eps = 2
+        #self.optimizer = optim.Adam(self.parameters(), lr=1e-6)
+        self.criterion = nn.MSELoss()
+        self.eps = 2 #temporary epsilon
         self.current_state = []
         self.memory = []
         
-        
+    def parameters(self):
+        pass
+
     def pick_random_move(self):
         moves = random.choice(self.possible_moves)
         return moves
     
     def get_action(self):
         ran = random.randint(0,100) / 100
-        if ran < self.eps:
+        if ran < self.eps: #self.initial_epsilon
             return self.pick_random_move()
         else:
             return self.get_best_action()
@@ -69,14 +72,15 @@ class Agent(DQN):
     def update_eps(self):
         self.eps = 1 / self.total_moves 
 
-    def get_best_action(self):
-        pass
+    def get_best_action(self, current_state):
+        self.forward(self.current_state)
 
     def update_current_state(self, states):
         self.current_state = states
     
     def memory_push(self, states):
-        self.memory.append(Transition(states[0],states[1],states[2],states[3],states[4])) #save a certain transition in reply memory
+        #self.memory.append(Transition(states[0],states[1],states[2],states[3],states[4])) #save a certain transition in reply memory
+        self.memory.append(states)
 
     def sample(self, sample_size):
         return random.sample(self.memory, sample_size) #returns a random batch of memory of deffined sample size for tranining
@@ -84,8 +88,14 @@ class Agent(DQN):
     def current_len(self):
         return len(self.memory) #return the current size of reply memory
 
+    def train(self):
+        #optimizer = optim.Adam(self.parameters(), lr=1e-6)
+        criterion = nn.MSELoss() 
+        image_data, reward, terminal = self.memory[-1][-3:]
 
-    
+
+
+
 
 
 
