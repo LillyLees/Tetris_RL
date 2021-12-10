@@ -63,6 +63,7 @@ class Tetramino():
         self.rotation_index = 0
         self.generate_new_tet()
         self.current_tet = self.get_current_tet()
+        self.spawn_tet()
 
     def get_current_tet_coords(self, roation): #given rotation gets the coordanats for drawing the current tet
             return self.Tetraminos[self.currenttet_nexttet[0]][roation]
@@ -101,6 +102,17 @@ class Tetris(Tetramino):
         self.screen = pygame.display.set_mode([self.board_width, self.board_height])
         self.last_move = ""
         self.myfont = pygame.font.SysFont('Comic Sans MS', 30)
+
+    def reset_Game(self):
+        self.make_bit_map()
+        self.reset_tet()
+        self.playing = True
+        self.level = 0
+        self.score = 0
+        self.temp_score = 0
+        self.total_lines_cleared = 0
+        self.last_move = ""
+        
 
     def Draw_board(self):
             self.screen = pygame.display.set_mode([self.board_width, self.board_height]) 
@@ -308,3 +320,5 @@ class Tetris(Tetramino):
     
     def game_states(self):
         return [self.current_tet, self.bit_map, self.score] #change so not current tet
+
+new_game = Tetris()

@@ -93,6 +93,7 @@ class Agent(DQN):
         criterion = nn.MSELoss() 
         image_data, reward, terminal = self.memory[-1][-3:]
 
+agent = Agent()
 
 
 
