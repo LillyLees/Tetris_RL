@@ -47,7 +47,7 @@ class DQN(nn.Module): #deep Q network class
 class Agent(DQN):
     def __init__(self):
         super(Agent, self).__init__()
-        self.possible_moves = ["H","L","R","RL","RR"] #Hard drop, Left one, Right one, Left Rotation, Right Rotation
+        self.possible_moves = ["H","L","R","RL","RR","N"] #Hard drop, Left one, Right one, Left Rotation, Right Rotation
         self.total_moves = 0
         #self.optimizer = optim.Adam(self.parameters(), lr=1e-6)
         self.criterion = nn.MSELoss()
@@ -59,7 +59,8 @@ class Agent(DQN):
         pass
 
     def pick_random_move(self):
-        moves = random.choice(self.possible_moves)
+        possible = ["H","L","L","L","L","L","L","R","R","R","R","R","R","RL","RR","N"]
+        moves = random.choice(possible)
         return moves
     
     def get_action(self):
@@ -73,6 +74,7 @@ class Agent(DQN):
         self.eps = 1 / self.total_moves 
 
     def get_best_action(self, current_state):
+        model
         self.forward(self.current_state)
 
     def update_current_state(self, states):

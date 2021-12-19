@@ -1,3 +1,7 @@
+games = int(input("Games to run: "))
+Training = input("Training Y/N: ").upper()
+
+
 import numpy as np
 import pygame
 from numpy import array, left_shift
@@ -5,8 +9,6 @@ from Tetris import *
 import time
 from agent import *
 
-games = int(input("Games to run: "))
-Training = input("Training Y/N: ").upper()
 
 
 pygame.font.init()
@@ -14,8 +16,7 @@ pygame.font.init()
 for game in range(games):
     new_game.reset_Game()
     turns = 8
-    movement_dict = {"H" : new_game.tet_hard_drop, "L" : new_game.left_one, "R" : new_game.right_one, 
-            "RL" : new_game.left_rotation, "RR" : new_game.right_rotation}
+    
 
     while new_game.playing == True:
         for turn in range(turns): 
@@ -29,8 +30,8 @@ for game in range(games):
 
             agent.update_current_state(new_game.game_states())
             move = agent.get_action()
-
-            movement_dict[move]() #make move 
+            if move != "N":
+                movement_dict[move]() #make move 
 
             new_game.update_tet_position()
 

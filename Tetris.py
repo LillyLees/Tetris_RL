@@ -322,3 +322,5 @@ class Tetris(Tetramino):
         return [self.current_tet, self.bit_map, self.score] #change so not current tet
 
 new_game = Tetris()
+movement_dict = {"H" : new_game.tet_hard_drop, "L" : new_game.left_one, "R" : new_game.right_one, 
+            "RL" : new_game.left_rotation, "RR" : new_game.right_rotation}
