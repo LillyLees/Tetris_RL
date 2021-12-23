@@ -29,6 +29,7 @@ for game in range(games):
             new_game.temp_score = new_game.score
 
             agent.update_current_state(new_game.game_states())
+
             move = agent.get_action()
             if move != "N":
                 movement_dict[move]() #make move 
@@ -53,7 +54,7 @@ for game in range(games):
         #redraw board with new moves 
         pygame.display.flip()
         #print(new_game.current_tet)
-        time.sleep(0.3) 
+        time.sleep(0.15) 
         #get state, reward, done, action
 
     new_game.reset_Game()

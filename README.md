@@ -38,3 +38,4 @@ game state function should return score and board not current tet
 current tet should not be stored in the transition it should only be used as input to the NN 
 running lots at same times 
 
+avrage random agent gets a score of 

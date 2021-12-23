@@ -16,12 +16,11 @@ Transition = namedtuple('Transition',
 
 
 
-class DQN(nn.Module): #deep Q network class
-
+class DQN(nn.Module): 
     def __init__(self):
         super(DQN, self).__init__()
-#10 x 24 input image for conv1
-        self.number_of_actions = 5 #5 diffrent options for output
+        #10 x 24 input image for conv1
+        self.number_of_actions = 6 #L,R,HD,N,LT,RT
         self.gamma = 0.99
         self.final_epsilon = 0.0001
         self.initial_epsilon = 1
@@ -36,7 +35,7 @@ class DQN(nn.Module): #deep Q network class
         self.fc3 = nn.Linear(84, self.number_of_actions)
 
     def forward(self, x): 
-        x = F.max_pool2d(F.relu(self.conv1(x)), (10, 24))
+        x = F.max_pool2d(F.relu(self.conv1(*x)), (10, 24))
         x = torch.flatten(x, 1) 
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -73,9 +72,9 @@ class Agent(DQN):
     def update_eps(self):
         self.eps = 1 / self.total_moves 
 
-    def get_best_action(self, current_state):
-        model
-        self.forward(self.current_state)
+    def get_best_action(self):
+        print(self.current_state)
+        max(self.forward(self.current_state))
 
     def update_current_state(self, states):
         self.current_state = states
