@@ -319,7 +319,7 @@ class Tetris(Tetramino):
         return self.score - self.temp_score
     
     def game_states(self):
-        return [self.current_tet, self.bit_map, self.score] #change so not current tet
+        return [self.current_tet, self.bit_map] #change so not current tet
 
 new_game = Tetris()
 movement_dict = {"H" : new_game.tet_hard_drop, "L" : new_game.left_one, "R" : new_game.right_one, 
