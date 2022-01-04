@@ -168,7 +168,9 @@ class CustomEnv(gym.Env, Tetramino):
                     self.draw_square(color,column,row)
             
             pygame.display.flip()
-  #close function
+  
+  def close(self):
+      pygame.quit()
 
   def draw_square(self,color,column,row):
         pygame.draw.rect(self.screen,
