@@ -108,7 +108,10 @@ class CustomEnv(gym.Env, Tetramino):
       self.rows_dropped_tr = 0
       self.total_lines_cleared = 0
       self.observation_space = [[0 for x in range(10)] for y in range(24)]
-
+  
+  def get_state(self):
+      return self.current_tet, self.observation_space
+      
   def step(self, action):
     self.drop_time += 1
     self.last_move = action
@@ -247,7 +250,6 @@ class CustomEnv(gym.Env, Tetramino):
 
 
   def drop_down_one(self):
-        ("DP")
         if self.check_collision(1, 0, self.rotation) == False:
             self.y_move += 1
             self.rows_dropped_tr = 1
@@ -255,14 +257,12 @@ class CustomEnv(gym.Env, Tetramino):
             self.dropped = True
     
   def left_one(self):
-        print("LP")
         if self.check_collision(0, -1, self.rotation) == False:
             self.x_move -= 1
         if self.check_collision(1, 0, self.rotation) == True:
             self.dropped = True
     
   def right_one(self):
-        print("RP")
         if self.check_collision(0, 1, self.rotation) == False:
             self.x_move += 1
         if self.check_collision(1, 0, self.rotation) == True:
@@ -341,7 +341,6 @@ class CustomEnv(gym.Env, Tetramino):
             scores = [40, 100, 300, 1200]
           
             if lines_cleared > 0:
-                print("pop")
                 self.score += scores[lines_cleared - 1] * (self.level + 1)
                 
             if action == 0:
