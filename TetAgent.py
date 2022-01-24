@@ -77,32 +77,20 @@ class DQN(nn.Module):
     def forward(self, states): #inputs to conv layers should be Tensors not list. convert list => tensor
 
         board, piece = states
-        print(board)
-        exit
-        #board = self.flt_totns(board)
-        #embed board 2
+       
         embed_piece = torch.tensor(piece).unsqueeze(0).unsqueeze(0).to(device).float() #some reason getting diffrent dims
         #board = torch.FloatTensor(board).unsqueeze(0).unsqueeze(0).to(device)
         #print(embed_piece)
         if type(piece) == int:
             board = torch.FloatTensor(board).unsqueeze(0).unsqueeze(0).to(device) #issue
            # board = self.flt_totns(board) #breaks code, Kernal size to big (3x 3) 
-            print(board.shape)
+            
             embed_piece = torch.tensor(piece).unsqueeze(0).unsqueeze(0).to(device).float()
+        else:
+            board = board.unsqueeze(1).to(device)
+            embed_piece = piece.to(device)
             
         embed_board = self.flatten(self.conv3_board(self.conv2_board(self.conv1_board(board))))
-        
-        if type(piece) != int:
-            #print(f"BS {embed_board.shape}")
-            #print(f"PS {piece}") #[[1],[2],[7].....] etc
-            #print(f"EB {embed_board}")
-            embed_piece = piece #[128, 1]
-            
-  
-        #print(f"peice Shape: {embed_piece.shape}") 
-        #print(f"Board Shape: {embed_board.shape}")
-        #print(f"Peice {embed_piece}") #[[1],[2],[7].....] etc
-        #print(f"board {embed_board}")
 
         embed_joined = torch.cat([embed_board, embed_piece],dim=1)
         #print(f"shape of both: {embed_joined.shape}") #[1,433] when playing this is ok
@@ -163,10 +151,11 @@ def optimize_model():
     non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
                                           batch.next_state)), device=device, dtype=torch.bool)
     
-    non_final_next_pieces = torch.cat([torch.tensor(s[1]).unsqueeze(0) for s in list(batch.next_state)
-                                                if s is not None]).float()
-    non_final_next_board = torch.cat([torch.tensor(s[0]) for s in list(batch.next_state)
-                                                if s is not None]).float()
+    non_final_next_pieces = torch.cat([torch.tensor([s[1]]).unsqueeze(0) for s in list(batch.next_state)
+                                                if s is not None]).to(device).float() 
+    
+    non_final_next_board = torch.cat([torch.tensor([s[0]]) for s in list(batch.next_state)
+                                                if s is not None]).squeeze(0).squeeze(0).float() 
 
     board_batch = torch.cat([torch.tensor([s[0]]) for s in batch.state]).squeeze(0).squeeze(0).float() 
     #print("BBBBB", board_batch)
@@ -182,15 +171,15 @@ def optimize_model():
     action_batch = torch.cat([torch.tensor(s).unsqueeze(0) for s in batch.action]).to(device)
     reward_batch = torch.cat(batch.reward).to(device)
 
-    #print(f"PB {piece_batch.shape}")
-    #l = torch.cat([torch.tensor(policy_net((i,l))) for i, l in board_batch, piece_batch]).to(device).float().gather(1, action_batch)
-    #for i, l in board_batch, piece_batch:
-    #    policy_net((i,l)).gather(1, action_batch)
 
-    state_action_values = policy_net((board_batch, piece_batch)).gather(1, action_batch) #THIS LINE KILL ME #issue
+    print("SAV", policy_net((board_batch, piece_batch)))
+    state_action_values = policy_net((board_batch, piece_batch)).gather(1, action_batch)  #THIS LINE KILL ME #issue
+    
+    
 
     next_state_values = torch.zeros(BATCH_SIZE, device=device)
     next_state_values[non_final_mask] = target_net((non_final_next_board, non_final_next_pieces)).max(1)[0].detach()
+    
     # Compute the expected Q values
     expected_state_action_values = (next_state_values * GAMMA) + reward_batch
 
