@@ -8,41 +8,41 @@ import time
 class Tetramino():
     def __init__(self):
         self.x_move, self.y_move = [0,-1]
-        self.Tetraminos = {"I": {0 : [[2 , 3 ], [2 , 4 ], [2, 5 ], [2, 6 ]], 
+        self.Tetraminos = {0: {0 : [[2 , 3 ], [2 , 4 ], [2, 5 ], [2, 6 ]], #I
                                 90 : [[0 , 5 ], [1 , 5 ], [2 , 5], [3 , 5]],
                                 180 : [[2 , 3 ], [2 , 4 ], [2, 5 ], [2, 6 ]], 
                                 270 : [[0 , 5 ], [1 , 5 ], [2 , 5], [3 , 5]]  },
 
-                    "J": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 5 ]], 
+                    2: {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 5 ]], #J
                     90 : [[0 , 4 ], [1 , 4 ], [2, 4 ], [2 , 3 ]], 
                     180 :[[1 , 3 ], [2 , 4 ], [2, 5 ], [2 , 3 ]], 
                     270 :[[0 , 4 ], [1 , 4 ], [2, 4 ], [0 , 5 ]]}, 
 
-                    "L": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 3 ]], 
+                    1: {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 3 ]], #L
                     90 : [[0 , 3 ], [1 , 4 ], [2, 4 ], [0 , 4]], 
                     180 :[[1 , 5 ], [2 , 4 ], [2, 5 ], [2 , 3 ]], 
                     270 :[[0 , 4 ], [1 , 4 ], [2, 4 ], [2 , 5 ]]},
 
-                    "T": {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 4 ]], 
+                    3: {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 4 ]], #T
                     90 : [[0 , 4 ], [1 , 4 ],[1, 3], [2 , 4 ]], 
                     180 :[[2 , 3 ], [2 , 4 ],[2, 5 ], [1 , 4 ]], 
                     270 :[[0 , 4 ], [1 , 4 ],[1, 5 ], [1 , 3]]}, 
 
-                    "O": {0 : [[1 , 4], [2 , 4], [2, 5], [1, 5]]}, 
+                    4: {0 : [[1 , 4], [2 , 4], [2, 5], [1, 5]]}, #0
 
-                    "S": {0 : [[1 , 5], [1 , 4],[2, 3 ], [2 , 4]], 
+                    5: {0 : [[1 , 5], [1 , 4],[2, 3 ], [2 , 4]], #S
                         90 : [[0 , 4 ], [1 , 4 ],[1, 5 ], [2 , 5 ]],
                         180 : [[1 , 5], [1 , 4],[2, 3 ], [2 , 4]], 
                         270 : [[0 , 4 ], [1 , 4 ],[1, 5 ], [2 , 5 ]]}, 
 
-                    "Z": {0 : [[1 , 3 ], [1, 4],[2, 4 ], [2 , 5]], 
+                    6: {0 : [[1 , 3 ], [1, 4],[2, 4 ], [2 , 5]], #Z
                                 90 : [[0 , 5 ], [1 , 5],[1, 4 ], [2 , 4 ]],
                                 180 : [[1 , 3 ], [1, 4],[2, 4 ], [2 , 5]], 
                                 270 : [[0 , 5 ], [1 , 5],[1, 4 ], [2 , 4 ]] }} 
       
                          
-        self.Bag = ["I", "L", "J", "T", "O", "S", "Z"]
-        self.current_tet = random.choice(self.Bag)
+        #self.Bag = ["I", "L", "J", "T", "O", "S", "Z"] 
+        self.current_tet = random.randint(0,6) #I,L,J,T,O,S,Z
         self.rotations = [0, 90, 180, 270]
         self.rotation_index = 0
         self.rotation = self.rotations[self.rotation_index]
@@ -55,14 +55,14 @@ class Tetramino():
         self.rotation_index = 0
         self.temp_y_move = 0
         self.dropped = False
-        self.current_tet = random.choice(self.Bag)
+        self.current_tet = random.randint(0,5)
         
 
     def get_current_tet_coords(self, roation): #given rotation gets the coordanats for drawing the current tet
             return self.Tetraminos[self.current_tet][roation]
             
     def generate_new_tet(self):
-            self.current_tet = random.choice(self.Bag)
+            self.current_tet = random.randint(0,5)
 
 
 class CustomEnv(gym.Env, Tetramino):
@@ -138,6 +138,7 @@ class CustomEnv(gym.Env, Tetramino):
     reward = self.calc_reward(lc)
 
     if 1 in self.observation_space[0]:
+        print("not on my lawn")
         self.playing = False
         reward = - reward
     
@@ -275,7 +276,7 @@ class CustomEnv(gym.Env, Tetramino):
       self.rotate(-1)
 
   def rotate(self, dir): 
-        if self.current_tet == "O":
+        if self.current_tet == 4:
             self.rotation_index = 0
         else:
             if self.rotation_index == 3 and dir == 1:
