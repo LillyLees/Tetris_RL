@@ -212,7 +212,7 @@ for i_episode in range(num_episodes):
         reward = torch.tensor([reward], device=device)
         
         env.Render_m()
-        time.sleep(0.1)
+        time.sleep(0.25)
     
         if playing:
             cur_tet, board = env.get_state()

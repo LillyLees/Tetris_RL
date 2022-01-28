@@ -1,3 +1,4 @@
+from tabnanny import check
 import gym
 from gym import spaces
 import pygame
@@ -8,37 +9,40 @@ import time
 class Tetramino():
     def __init__(self):
         self.x_move, self.y_move = [0,-1]
-        self.Tetraminos = {0: {0 : [[2 , 3 ], [2 , 4 ], [2, 5 ], [2, 6 ]], #I
-                                90 : [[0 , 5 ], [1 , 5 ], [2 , 5], [3 , 5]],
-                                180 : [[2 , 3 ], [2 , 4 ], [2, 5 ], [2, 6 ]], 
-                                270 : [[0 , 5 ], [1 , 5 ], [2 , 5], [3 , 5]]  },
+        self.Tetraminos = {0: {0 : [[3 , 3], [3 , 4 ], [3, 5 ], [3, 6 ]], #I
+                                90 : [[1 , 5 ], [2 , 5 ], [3 , 5], [4 , 5]],
+                                180 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [3, 6 ]], 
+                                270 : [[1 , 5 ], [2 , 5 ], [3 , 5], [4 , 5]]  },
 
-                    2: {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 5 ]], #J
-                    90 : [[0 , 4 ], [1 , 4 ], [2, 4 ], [2 , 3 ]], 
-                    180 :[[1 , 3 ], [2 , 4 ], [2, 5 ], [2 , 3 ]], 
-                    270 :[[0 , 4 ], [1 , 4 ], [2, 4 ], [0 , 5 ]]}, 
+                    2: {0 :[[2 , 3 ], [2 , 4 ], [2, 5 ], [3 , 5 ]], #J
+                    90 : [[1 , 4 ], [2 , 4 ], [3, 4 ], [3 , 3 ]], 
+                    180 :[[2 , 3 ], [3 , 4 ], [3, 5 ], [3 , 3 ]], 
+                    270 :[[1 , 4 ], [2 , 4 ], [3, 4 ], [3 , 3 ]]}, 
 
-                    1: {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 3 ]], #L
-                    90 : [[0 , 3 ], [1 , 4 ], [2, 4 ], [0 , 4]], 
-                    180 :[[1 , 5 ], [2 , 4 ], [2, 5 ], [2 , 3 ]], 
-                    270 :[[0 , 4 ], [1 , 4 ], [2, 4 ], [2 , 5 ]]},
+                    1: {0 :[[2 , 3 ], [2 , 4 ], [2, 5 ], [3 , 3 ]], #L
+                    90 : [[1 , 3 ], [2 , 4 ], [3, 4 ], [1 , 4]], 
+                    180 :[[2 , 5 ], [3 , 4 ], [3, 5 ], [3 , 3 ]], 
+                    270 :[[1 , 4 ], [2 , 4 ], [3, 4 ], [3 , 5 ]]},
 
-                    3: {0 :[[1 , 3 ], [1 , 4 ], [1, 5 ], [2 , 4 ]], #T
-                    90 : [[0 , 4 ], [1 , 4 ],[1, 3], [2 , 4 ]], 
-                    180 :[[2 , 3 ], [2 , 4 ],[2, 5 ], [1 , 4 ]], 
-                    270 :[[0 , 4 ], [1 , 4 ],[1, 5 ], [1 , 3]]}, 
+                    3: {0 :[[2 , 3 ], [2 , 4 ], [2, 5 ], [3 , 4 ]], #T
+                    90 : [[1 , 4 ], [2 , 4 ],[2, 3], [3 , 4 ]], 
+                    180 :[[3 , 3 ], [3 , 4 ],[3, 5 ], [2 , 4 ]], 
+                    270 :[[1 , 4 ], [2 , 4 ],[2, 5 ], [2 , 3]]}, 
 
-                    4: {0 : [[1 , 4], [2 , 4], [2, 5], [1, 5]]}, #0
+                    4: {0 : [[2 , 4], [3 , 4], [3, 5], [2, 5]],
+                    90 : [[2 , 4], [3 , 4], [3, 5], [2, 5]],
+                    180 : [[2 , 4], [3 , 4], [3, 5], [2, 5]],
+                    270 : [[2 , 4], [3 , 4], [3, 5], [2, 5]]}, #0
 
-                    5: {0 : [[1 , 5], [1 , 4],[2, 3 ], [2 , 4]], #S
-                        90 : [[0 , 4 ], [1 , 4 ],[1, 5 ], [2 , 5 ]],
-                        180 : [[1 , 5], [1 , 4],[2, 3 ], [2 , 4]], 
-                        270 : [[0 , 4 ], [1 , 4 ],[1, 5 ], [2 , 5 ]]}, 
+                    5: {0 : [[2 , 5], [2 , 4],[3, 3 ], [3 , 4]], #S
+                        90 : [[1 , 4 ], [2 , 4 ],[2, 5 ], [3 , 5 ]],
+                        180 : [[2 , 5], [2 , 4],[3, 3 ], [3 , 4]], 
+                        270 : [[1 , 4 ], [2 , 4 ],[2, 5 ], [3 , 5 ]]}, 
 
-                    6: {0 : [[1 , 3 ], [1, 4],[2, 4 ], [2 , 5]], #Z
-                                90 : [[0 , 5 ], [1 , 5],[1, 4 ], [2 , 4 ]],
-                                180 : [[1 , 3 ], [1, 4],[2, 4 ], [2 , 5]], 
-                                270 : [[0 , 5 ], [1 , 5],[1, 4 ], [2 , 4 ]] }} 
+                    6: {0 : [[2 , 3 ], [2, 4],[3, 4 ], [3 , 5]], #Z
+                                90 : [[1, 5 ], [2 , 5],[2, 4 ], [3 , 4 ]],
+                                180 : [[2 , 3 ], [2, 4],[3, 4 ], [3 , 5]], 
+                                270 : [[1 , 5 ], [2 , 5],[2, 4 ], [3 , 4 ]] }} 
       
                          
         #self.Bag = ["I", "L", "J", "T", "O", "S", "Z"] 
@@ -55,14 +59,15 @@ class Tetramino():
         self.rotation_index = 0
         self.temp_y_move = 0
         self.dropped = False
-        self.current_tet = random.randint(0,5)
+        self.current_tet = random.randint(0,6)
         
 
     def get_current_tet_coords(self, roation): #given rotation gets the coordanats for drawing the current tet
+            
             return self.Tetraminos[self.current_tet][roation]
             
     def generate_new_tet(self):
-            self.current_tet = random.randint(0,5)
+            self.current_tet = random.randint(0,6)
 
 
 class CustomEnv(gym.Env, Tetramino):
@@ -137,8 +142,7 @@ class CustomEnv(gym.Env, Tetramino):
     self.get_score(lc, action)
     reward = self.calc_reward(lc)
 
-    if 1 in self.observation_space[0]:
-        print("not on my lawn")
+    if self.check_game_end() == False:  
         self.playing = False
         reward = - reward
     
@@ -150,7 +154,15 @@ class CustomEnv(gym.Env, Tetramino):
 
     return (self.observation_space, self.current_tet), reward, self.playing, info
 
-    
+
+  def check_game_end(self):
+      if 1 in self.observation_space[0]:
+          return False
+      blocks = self.get_current_tet_coords(self.rotation)
+      for block in blocks:
+          y, x = block
+          if self.observation_space[y][x] == 1:
+              return False
   def Render_m(self):
             self.screen = pygame.display.set_mode([self.board_width, self.board_height]) 
             pygame.display.set_caption("Reward-tris")
@@ -251,6 +263,7 @@ class CustomEnv(gym.Env, Tetramino):
 
 
   def drop_down_one(self):
+        #print("Drop down one")
         if self.check_collision(1, 0, self.rotation) == False:
             self.y_move += 1
             self.rows_dropped_tr = 1
@@ -258,21 +271,25 @@ class CustomEnv(gym.Env, Tetramino):
             self.dropped = True
     
   def left_one(self):
+        #print("left one")
         if self.check_collision(0, -1, self.rotation) == False:
             self.x_move -= 1
         if self.check_collision(1, 0, self.rotation) == True:
             self.dropped = True
     
   def right_one(self):
+        #print("right one")
         if self.check_collision(0, 1, self.rotation) == False:
             self.x_move += 1
         if self.check_collision(1, 0, self.rotation) == True:
             self.dropped = True
 
   def right_rotation(self):
+      #print("right rotation")
       self.rotate(1)
   
   def left_rotation(self):
+      #print("left rotation")
       self.rotate(-1)
 
   def rotate(self, dir): 
@@ -288,10 +305,13 @@ class CustomEnv(gym.Env, Tetramino):
             temp_rot = self.rotations[dir]
 
             is_col = self.check_collision(0, 0, temp_rot)
+            
 
             if is_col == False:
+                
+                self.rotation = temp_rot
                 self.rotation_index = dir
-                is_col = self.check_collision(0, 1, temp_rot)
+                is_col = self.check_collision(1, 0, temp_rot)
                 if is_col == True:
                     self.dropped = True
   
@@ -361,5 +381,11 @@ env = CustomEnv()
 
 env.action_space.sample()
 
+while env.playing:
+    env.Render_m()
+    time.sleep(0.25)
+    env.step(random.randint(0,5))
+    time.sleep(0.25)
+    env.Render_m()
 
             
