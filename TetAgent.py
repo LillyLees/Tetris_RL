@@ -93,8 +93,7 @@ class DQN(nn.Module):
         embed_board = self.flatten(self.conv3_board(self.conv2_board(self.conv1_board(board))))
 
         embed_joined = torch.cat([embed_board, embed_piece],dim=1)
-        #print(f"shape of both: {embed_joined.shape}") #[1,433] when playing this is ok
-        # [1, 73712] when training and len of embed
+        
         return self.fc2(self.fc1(embed_joined))
        
 
@@ -111,10 +110,12 @@ screen_width = env.board_width
 # Get number of actions from gym action space
 n_actions = env.action_space.n
 
-policy_net = DQN().to(device)
-target_net = DQN().to(device)
-#target_net.load_state_dict(policy_net.state_dict())
-#target_net.eval()
+#policy_net = DQN().to(device)
+#target_net = DQN().to(device)
+
+policy_net = torch.load('policy_net.ckpt')
+target_net = torch.load('target_net.ckpt')
+
 
 optimizer = optim.RMSprop(policy_net.parameters())
 memory = ReplayMemory(10000)
@@ -158,21 +159,14 @@ def optimize_model():
                                                 if s is not None]).squeeze(0).squeeze(0).float() 
 
     board_batch = torch.cat([torch.tensor([s[0]]) for s in batch.state]).squeeze(0).squeeze(0).float() 
-    #print("BBBBB", board_batch)
-    #for s in batch.state:
-    #    print(f"BS E {s[1]}")
+
     piece_batch = torch.cat([torch.tensor([s[1]]).unsqueeze(0) for s in batch.state]).to(device).float() 
-    
-    #piece_batch = piece_batch.permute(1, 0)
-    
-    #print(f"PB {piece_batch}")
+
     
     #embed board, emebed peice. cant cat because diffre number of dims. 
     action_batch = torch.cat([torch.tensor(s).unsqueeze(0) for s in batch.action]).to(device)
     reward_batch = torch.cat(batch.reward).to(device)
 
-    # board_batch = board_batch.unsqueeze(1)
-    # piece_batch = piece_batch.unsqueeze(1)
     state_action_values = policy_net((board_batch, piece_batch))#.gather(1, action_batch)  #THIS LINE KILL ME #issue
     
     
@@ -196,7 +190,8 @@ def optimize_model():
     print(f'LOSS {loss}')
 
 
-num_episodes = 100
+
+num_episodes = 500
 for i_episode in range(num_episodes):
     print(f'EPISODE {i_episode}')
     # Initialize the environment and state
@@ -244,7 +239,8 @@ for i_episode in range(num_episodes):
     
 print('Complete')
 
-#env.render()
+torch.save(policy_net, 'policy_net.ckpt')
+torch.save(target_net, 'target_net.ckpt')
+
+
 env.close()
-'''plt.ioff()
-plt.show()'''
