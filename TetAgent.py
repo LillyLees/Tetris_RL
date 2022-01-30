@@ -89,13 +89,13 @@ class DQN(nn.Module):
         else:
             board = board.unsqueeze(1).to(device)
             embed_piece = piece.to(device)
-            
+
         embed_board = self.flatten(self.conv3_board(self.conv2_board(self.conv1_board(board))))
 
         embed_joined = torch.cat([embed_board, embed_piece],dim=1)
         #print(f"shape of both: {embed_joined.shape}") #[1,433] when playing this is ok
         # [1, 73712] when training and len of embed
-        return torch.argmax(self.fc2(self.fc1(embed_joined)))
+        return self.fc2(self.fc1(embed_joined))
        
 
 BATCH_SIZE = 128
@@ -134,7 +134,7 @@ def select_action(state):
     steps_done += 1
     if sample > eps_threshold:
         with torch.no_grad():
-            return policy_net(state).item()
+            return torch.argmax(policy_net(state), dim=1).item()
     else:
         return ran_move()
 
@@ -171,9 +171,9 @@ def optimize_model():
     action_batch = torch.cat([torch.tensor(s).unsqueeze(0) for s in batch.action]).to(device)
     reward_batch = torch.cat(batch.reward).to(device)
 
-
-    print("SAV", policy_net((board_batch, piece_batch)))
-    state_action_values = policy_net((board_batch, piece_batch)).gather(1, action_batch)  #THIS LINE KILL ME #issue
+    # board_batch = board_batch.unsqueeze(1)
+    # piece_batch = piece_batch.unsqueeze(1)
+    state_action_values = policy_net((board_batch, piece_batch))#.gather(1, action_batch)  #THIS LINE KILL ME #issue
     
     
 
@@ -193,18 +193,19 @@ def optimize_model():
     for param in policy_net.parameters():
         param.grad.data.clamp_(-1, 1)
     optimizer.step()
-
+    print(f'LOSS {loss}')
 
 
 num_episodes = 100
 for i_episode in range(num_episodes):
+    print(f'EPISODE {i_episode}')
     # Initialize the environment and state
     env.reset()
     cur_tet, board = env.get_state()
     #state = [torch.FloatTensor(board), torch.FloatTensor(cur_tet)]
     state = [board, cur_tet]
 
-    for t in tqdm.tqdm(range(100)):
+    for t in tqdm.tqdm(range(700)):
         # Select and perform an action
         action = select_action(state)
 
@@ -212,7 +213,7 @@ for i_episode in range(num_episodes):
         reward = torch.tensor([reward], device=device)
         
         env.Render_m()
-        time.sleep(0.25)
+        # time.sleep(0.25)
     
         if playing:
             cur_tet, board = env.get_state()
@@ -242,6 +243,7 @@ for i_episode in range(num_episodes):
         target_net.load_state_dict(policy_net.state_dict())
     
 print('Complete')
+
 #env.render()
 env.close()
 '''plt.ioff()

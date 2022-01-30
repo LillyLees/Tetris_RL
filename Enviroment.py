@@ -381,11 +381,4 @@ env = CustomEnv()
 
 env.action_space.sample()
 
-while env.playing:
-    env.Render_m()
-    time.sleep(0.25)
-    env.step(random.randint(0,5))
-    time.sleep(0.25)
-    env.Render_m()
-
             
