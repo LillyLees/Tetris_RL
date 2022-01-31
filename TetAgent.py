@@ -18,6 +18,8 @@ import torchvision.transforms as T
 from Enviroment import *
 
 env = CustomEnv()
+
+from ReplayMem import ReplayMemory
 #env.action_space.sample()
 
 #env = gym.make('CartPole-v0').unwrapped
@@ -32,24 +34,7 @@ plt.ion()
 # if gpu is to be used
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-Transition = namedtuple('Transition',
-                        ('state', 'action', 'next_state', 'reward'))
 
-
-class ReplayMemory(object):
-
-    def __init__(self, capacity):
-        self.memory = deque([],maxlen=capacity)
-
-    def push(self, *args):
-        """Save a transition"""
-        self.memory.append(Transition(*args))
-
-    def sample(self, batch_size):
-        return random.sample(self.memory, batch_size)
-
-    def __len__(self):
-        return len(self.memory)
 
 class DQN(nn.Module):
 
@@ -110,11 +95,13 @@ screen_width = env.board_width
 # Get number of actions from gym action space
 n_actions = env.action_space.n
 
-#policy_net = DQN().to(device)
-#target_net = DQN().to(device)
+policy_net = DQN().to(device)
+target_net = DQN().to(device)
 
-policy_net = torch.load('policy_net.ckpt')
-target_net = torch.load('target_net.ckpt')
+
+
+#policy_net = torch.load('policy_net.ckpt')
+#target_net = torch.load('target_net.ckpt')
 
 
 optimizer = optim.RMSprop(policy_net.parameters())
@@ -191,7 +178,15 @@ def optimize_model():
 
 
 
-num_episodes = 500
+
+num_episodes = int(input("Number of epidodes: "))
+Will_train = input("Train Y/N: ").upper()
+if Will_train == "Y":
+    Will_train = True
+else:
+    Will_train = False
+
+
 for i_episode in range(num_episodes):
     print(f'EPISODE {i_episode}')
     # Initialize the environment and state
@@ -200,7 +195,8 @@ for i_episode in range(num_episodes):
     #state = [torch.FloatTensor(board), torch.FloatTensor(cur_tet)]
     state = [board, cur_tet]
 
-    for t in tqdm.tqdm(range(700)):
+    while env.playing == True:
+    #for t in tqdm.tqdm(range(700)):
         # Select and perform an action
         action = select_action(state)
 
@@ -225,15 +221,16 @@ for i_episode in range(num_episodes):
 
         # Perform one step of the optimization (on the policy network)
         
-        if not playing:
-            print(playing)
-            episode_durations.append(t + 1)
+        #if not playing:
+            #print(playing)
+            #episode_durations.append(t + 1)
             #plot_durations()
-            break
+            #break
         
         env.Render_m()
     # Update the target network, copying all weights and biases in DQN
-    optimize_model()
+    if Will_train == True:
+        optimize_model()
     if i_episode % TARGET_UPDATE == 0:
         target_net.load_state_dict(policy_net.state_dict())
     
