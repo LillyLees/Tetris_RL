@@ -1,4 +1,3 @@
-import gym
 import tqdm
 import math
 import random
@@ -50,10 +49,8 @@ screen_width = env.board_width
 # Get number of actions from gym action space
 n_actions = env.action_space.n
 
-#policy_net = DQN().to(device)
+#policy_net = DQN().to(device) used to itnitalize NNs
 #target_net = DQN().to(device)
-
-
 
 policy_net = torch.load('nets/policy_net.ckpt')
 target_net = torch.load('nets/target_net.ckpt')
@@ -130,68 +127,3 @@ def optimize_model():
         param.grad.data.clamp_(-1, 1)
     optimizer.step()
     print(f'LOSS {loss}')
-
-
-
-
-num_episodes = int(input("Number of epidodes: "))
-Will_train = input("Train Y/N: ").upper()
-if Will_train == "Y":
-    Will_train = True
-else:
-    Will_train = False
-
-
-for i_episode in range(num_episodes):
-    print(f'EPISODE {i_episode}')
-    # Initialize the environment and state
-    env.reset()
-    cur_tet, board = env.get_state()
-    state = [board, cur_tet]
-
-    #while env.playing == True:
-    for t in tqdm.tqdm(range(700)):
-        # Select and perform an action
-        action = select_action(state)
-
-        _, reward, playing, _ = env.step(action)
-        reward = torch.tensor([reward], device=device)
-        
-        env.Render_m()
-        # time.sleep(0.25)
-    
-        if playing:
-            cur_tet, board = env.get_state()
-            next_state = [board, cur_tet]
-
-        else:
-            next_state = None
-
-        # Store the transition in memory
-        memory.push(state, action, next_state, reward)
-        env.Render_m()
-        # Move to the next state
-        state = next_state
-
-        # Perform one step of the optimization (on the policy network)
-        
-        if not playing:
-            print(playing)
-            episode_durations.append(t + 1)
-            #plot_durations()
-            break
-        
-        env.Render_m()
-    # Update the target network, copying all weights and biases in DQN
-    if Will_train == True:
-        optimize_model()
-    if i_episode % TARGET_UPDATE == 0:
-        target_net.load_state_dict(policy_net.state_dict())
-    
-print('Complete')
-
-#torch.save(policy_net, 'policy_net.ckpt')
-#torch.save(target_net, 'target_net.ckpt')
-
-
-env.close()
