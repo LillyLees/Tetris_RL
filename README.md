@@ -1,6 +1,6 @@
 # Tetris_RL
 
-Agent made with PyTorch. 
+Model free Agent that seeks to maxamize episode length (made with PyTorch). 
 
 Enviroment made with PyGame, moddled off OpenAI Gym enviro
 
