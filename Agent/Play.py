@@ -2,7 +2,10 @@ from TetAgent import *
 
 num_episodes = int(input("Number of epidodes: \n"))
 Will_train = input("Train Y/N: \n").upper()
-Speed = (100 - int(input("speed 0-100: \n"))) / 2
+Speed = (100 - int(input("speed 0-100: \n"))) / 100
+
+policy_net = torch.load('nets/policy_net.ckpt')
+target_net = torch.load('nets/target_net.ckpt')
 
 if Will_train == "Y":
     Will_train = True

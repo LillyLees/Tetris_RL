@@ -127,3 +127,9 @@ def optimize_model():
         param.grad.data.clamp_(-1, 1)
     optimizer.step()
     print(f'LOSS {loss}')
+    
+    return int(loss)
+
+def plot(x,y):
+    plt.scatter(x, y)
+    plt.show()

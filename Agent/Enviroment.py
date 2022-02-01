@@ -159,7 +159,7 @@ class CustomEnv(gym.Env, Tetramino):
                 if on_col == True and self.observation_space[row][column] == 0:
                     h += 1
             hol += h 
-        reward = (-0.510066 * ah) + (-0.35663 * hol) + (0.760666 * lc) 
+        reward = (-0.510066 * ah) + (-0.35663 * hol) + (2 * lc) + (0.35 * self.score) 
         return reward
 
         

@@ -1,14 +1,15 @@
 from TetAgent import *
 
-num_episodes = int(input("Number of epidodes: \n"))
-Will_train = input("Train Y/N: \n").upper()
-Speed = (100 - int(input("speed 0-100: \n"))) / 2
-ep_leng = int(input("Episode length [in steps]: \n"))
+num_episodes = int(input("Number of epidodes: "))
 
-if Will_train == "Y":
-    Will_train = True
-else:
-    Will_train = False
+Speed = (100 - int(input("speed 0-100: "))) / 100
+ep_leng = int(input("Episode length [in steps]: "))
+
+policy_net = torch.load('nets/policy_net.ckpt')
+target_net = torch.load('nets/target_net.ckpt')
+
+losses = []
+rewards = []
 
 
 for i_episode in range(num_episodes):
@@ -17,14 +18,15 @@ for i_episode in range(num_episodes):
     env.reset()
     cur_tet, board = env.get_state()
     state = [board, cur_tet]
-
+    avg_r = []
     for t in tqdm.tqdm(range(ep_leng)):
         # Select and perform an action
         action = select_action(state)
 
         _, reward, playing, _ = env.step(action)
         reward = torch.tensor([reward], device=device)
-        
+        avg_r.append(int(reward[0]))
+
         env.Render_m()
         time.sleep(Speed)
     
@@ -48,14 +50,34 @@ for i_episode in range(num_episodes):
         
         env.Render_m()
     # Update the target network, copying all weights and biases in DQN
-    if Will_train == True:
-        optimize_model()
+    
+    rewards.append(sum(avg_r) / ep_leng)
+    loss = optimize_model()
+    if type(loss) == int:
+        losses.append(loss)
+    else:
+        losses.append(0)
+        
     if i_episode % TARGET_UPDATE == 0:
         target_net.load_state_dict(policy_net.state_dict())
     
+
+print(losses)
+print(rewards)
+
+#torch.save(policy_net, 'nets/policy_net.ckpt')
+#torch.save(target_net, 'nets/target_net.ckpt')
 print('Complete')
 
-torch.save(policy_net, 'nets/policy_net.ckpt')
-torch.save(target_net, 'nets/target_net.ckpt')
 
 env.close()
+pygame.quit()
+
+plt.ion()
+plt.scatter(rewards, losses)
+plt.xlabel("Reward")
+plt.ylabel("Loss")
+plt.show()
+
+
+
