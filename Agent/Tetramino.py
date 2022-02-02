@@ -1,14 +1,12 @@
-from tabnanny import check
-import gym
-from gym import spaces
 import pygame
 import random
 pygame.init()
-import time 
 
 class Tetramino():
     def __init__(self):
-        self.x_move, self.y_move = [0,-1]
+        self.x_move, self.y_move = [0,-1] #starting moved position of tet
+
+        # default tet coordinates for each rotation 
         self.Tetraminos = {0: {0 : [[3 , 3], [3 , 4 ], [3, 5 ], [3, 6 ]], #I
                                 90 : [[1 , 5 ], [2 , 5 ], [3 , 5], [4 , 5]],
                                 180 : [[3 , 3 ], [3 , 4 ], [3, 5 ], [3, 6 ]], 
@@ -45,26 +43,26 @@ class Tetramino():
                                 270 : [[1 , 5 ], [2 , 5],[2, 4 ], [3 , 4 ]] }} 
       
                          
-        #self.Bag = ["I", "L", "J", "T", "O", "S", "Z"] 
+        
         self.current_tet = random.randint(0,6) #I,L,J,T,O,S,Z
-        self.rotations = [0, 90, 180, 270]
-        self.rotation_index = 0
-        self.rotation = self.rotations[self.rotation_index]
-        self.temp_y_move = 0
+        self.rotations = [0, 90, 180, 270] #all possible roations
+        self.rotation_index = 0 #current rotation
+        self.rotation = self.rotations[self.rotation_index] #current rotation coordinates 
+        self.temp_y_move = 0 #how much tet has fallen before it is placed 
         self.dropped = False
         
-
+    #reset tets position and generates a new tet
     def reset_tet(self):
         self.x_move, self.y_move = [0,-1]
         self.rotation_index = 0
         self.temp_y_move = 0
         self.dropped = False
-        self.current_tet = random.randint(0,6)
+        self.generate_new_tet()
         
-
-    def get_current_tet_coords(self, roation): #given rotation gets the coordanats for drawing the current tet
-            
+    #gets current tet coords given rotation
+    def get_current_tet_coords(self, roation): 
             return self.Tetraminos[self.current_tet][roation]
-            
+
+    #generates new tet        
     def generate_new_tet(self):
             self.current_tet = random.randint(0,6)
