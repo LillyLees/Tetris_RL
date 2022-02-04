@@ -1,25 +1,5 @@
-import gym
-import tqdm
-import math
-import random
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-from collections import namedtuple, deque
-from itertools import count
-from PIL import Image
-
 import torch
 import torch.nn as nn
-from torch.nn.modules import flatten
-import torch.optim as optim
-import torch.nn.functional as F
-import torchvision.transforms as T
-import sys
-
-sys.path.insert(0, '/Users/climb/Desktop/My Stuff/School/CompSci/NEA/TetrisAI/Tetris_RL/Enviro')
-
-from Enviroment import *
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -63,6 +43,7 @@ class DQN(nn.Module):
         embed_board = self.flatten(self.conv3_board(self.conv2_board(self.conv1_board(board))))
 
         embed_joined = torch.cat([embed_board, embed_piece],dim=1)
-        
+        print("EBJ",embed_joined.size())
+        exit
         return self.fc2(self.fc1(embed_joined))
        

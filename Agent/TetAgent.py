@@ -1,71 +1,50 @@
-import tqdm
 import math
 import random
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-from collections import namedtuple, deque
-from itertools import count
-from PIL import Image
-
-import torch
-import torch.nn as nn
-from torch.nn.modules import flatten
 import torch.optim as optim
-import torch.nn.functional as F
-import torchvision.transforms as T
 from DeepQN import *
 from ReplayMem import *
-
-import sys
-
 from Enviroment import *
 
-
-#from Enviroment import *
-
-env = CustomEnv()
-
-is_ipython = 'inline' in matplotlib.get_backend()
-if is_ipython:
-    from IPython import display
-
-plt.ion()
-
-# if gpu is to be used
+# if gpu is to be used change to default device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
  
 
-BATCH_SIZE = 128
-GAMMA = 0.999
+BATCH_SIZE = 128 #min size of memory batch for training
+GAMMA = 0.999 #discont factor / how much importance is given to future rewards 
+
+#deffine starting epsilon and its increase per step
 EPS_START = 0.9
 EPS_END = 0.05
-EPS_DECAY = 200
-TARGET_UPDATE = 10
+EPS_DECAY = 200 
 
-screen_height = env.board_height
-screen_width = env.board_width
+TARGET_UPDATE = 10 #update target net every 10 epsisodes
 
 # Get number of actions from gym action space
 n_actions = env.action_space.n
 
-#policy_net = DQN().to(device) used to itnitalize NNs
-#target_net = DQN().to(device)
+# used to itnitalize NNs 
+'''
+policy_net = DQN().to(device) 
+target_net = DQN().to(device)
+'''
 
-policy_net = torch.load('nets/policy_net.ckpt')
-target_net = torch.load('nets/target_net.ckpt')
+#deffine NNs and load last saved point
+policy_net = torch.load('Nets/policy_net.ckpt')
+target_net = torch.load('Nets/target_net.ckpt')
 
 
-optimizer = optim.RMSprop(policy_net.parameters())
-memory = ReplayMemory(10000)
+optimizer = optim.RMSprop(policy_net.parameters()) #deffines how NN will be modified when optimizing (learning rate / weights etc)
+memory = ReplayMemory(10000) #deffine reply mem length
 
 
-steps_done = 0
+steps_done = 0 #total number of steps
 
+#random move, biases moving left / right 
 def ran_move():
     m = [0,1,1,1,2,2,2,3,3,4,5]
     return random.choice(m)
 
+#select action if random number is bigger then epsilon
 def select_action(state):
     global steps_done
     sample = random.random()
@@ -81,19 +60,23 @@ def select_action(state):
 
 episode_durations = []
 
+
 def optimize_model():
     print("optimizing")
-    if len(memory) < BATCH_SIZE:
+    if len(memory) < BATCH_SIZE: #checking if memory is to small to optimize
         return
-    transitions = memory.sample(BATCH_SIZE)
-    batch = Transition(*zip(*transitions))
+
+    transitions = memory.sample(BATCH_SIZE) #get random transition from memory
+    batch = Transition(*zip(*transitions)) #get all transitions 
     
     non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
                                           batch.next_state)), device=device, dtype=torch.bool)
     
+    #format peices in memory batch to tensors sutible for DQN
     non_final_next_pieces = torch.cat([torch.tensor([s[1]]).unsqueeze(0) for s in list(batch.next_state)
                                                 if s is not None]).to(device).float() 
     
+    #format boards in memory batch to tensors sutible for DQN
     non_final_next_board = torch.cat([torch.tensor([s[0]]) for s in list(batch.next_state)
                                                 if s is not None]).squeeze(0).squeeze(0).float() 
 
@@ -130,6 +113,4 @@ def optimize_model():
     
     return int(loss)
 
-def plot(x,y):
-    plt.scatter(x, y)
-    plt.show()
+

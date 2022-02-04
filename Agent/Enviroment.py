@@ -1,10 +1,8 @@
-from tabnanny import check
 import gym
 from gym import spaces
 import pygame
-import random
 pygame.init()
-import time 
+
 
 from Tetramino import *
 
@@ -20,9 +18,6 @@ class CustomEnv(gym.Env, Tetramino):
     self.action_space = spaces.Discrete(6)
     self.observation_space = [[0 for x in range(10)] for y in range(24)]
 
-    #self.Bag = ["I", "L", "J", "T", "O", "S", "Z"]
-    #self.current_Tet = random.choice(self.Bag)
-
     self.drop_time = 0
     self.rows_dropped_tr = 0
     self.total_lines_cleared = 0 #number in range 1-10
@@ -30,7 +25,7 @@ class CustomEnv(gym.Env, Tetramino):
     self.playing = True
     self.level = 0
     self.score = 0
-    #self.temp_score = 0
+    self.temp_score = 0
     self.score_multiplier = [40,100,300,1200]
         #The Tets spawn in a 2x4 area laying horazontally
     self.board_height = 535
@@ -53,6 +48,7 @@ class CustomEnv(gym.Env, Tetramino):
       self.rows_dropped_tr = 0
       self.total_lines_cleared = 0
       self.observation_space = [[0 for x in range(10)] for y in range(24)]
+      self.temp_score = 0
   
   def get_state(self):
       return self.current_tet, self.observation_space
@@ -68,18 +64,23 @@ class CustomEnv(gym.Env, Tetramino):
         self.drop_time = 0
     
     if self.dropped == True: #if enviro makes choice for agent agent's choice is ignored
-        self.place_tet()
+        lc = self.place_tet()
+        #lc = self.clear_line()
+        #self.get_score(lc, action)
         
     else:
         self.movement_dict[action]()
         if self.dropped == True:
-            self.place_tet()
+           lc =  self.place_tet()
+            #lc = self.clear_line()
+            #self.get_score(lc, action)
         else:
             self.update_state()
+            lc = 0
     
-    lc = self.clear_line()
-    self.update_level()
-    self.get_score(lc, action)
+    #lc = self.clear_line()
+    #self.update_level()
+    
     reward = self.calc_reward(lc)
 
     if self.check_game_end() == False:  
@@ -140,26 +141,45 @@ class CustomEnv(gym.Env, Tetramino):
 
   def calc_reward(self, lc): #score is proportional to the level and the lines cleared
         reward = 0
-        ah = 0
-        hol = 0
+        ah = 24 #aggragate height, default is 24
+        hol = 0 #holiness
+        mh = 0 #max height
+        in_dz = 0 #how many placed bloxs in danger zone (top three lines)
+        bump = 0 #bumpyness (diff between each row)
+        last_h = 0
+
         for column in range(10): # calculates the aggragte height of each column, to be minamizd 
-            h = 24
+            temp_mh = 0
+            found_col = False #tower hasnt started yet
+
             for row in range(24):
                 if self.observation_space[row][column] == 0:
-                    h -= 1
-                else:
-                    ah += h
-                    break
-        for column in range(10): # calculates the number of holes in the board
-            h = 0
-            on_col = False
-            for row in range(24):
-                if self.observation_space[row][column] != 0:
-                    on_col = True
-                if on_col == True and self.observation_space[row][column] == 0:
-                    h += 1
-            hol += h 
-        reward = (-0.510066 * ah) + (-0.35663 * hol) + (2 * lc) + (0.35 * self.score) 
+                    ah -= 1
+                    if found_col == True:
+                        hol += 1 #if there is an empty space in a column
+
+                if self.observation_space[row][column] == 1 and temp_mh == 0: #regiters height of column when it it found
+                    temp_mh = 24 - row
+
+                if self.observation_space[row][column] != 0: #pops when tower starts
+                    found_col = True
+
+            if column == 0:
+                last_h = temp_mh
+
+            bump += abs(temp_mh - last_h)
+            last_h = temp_mh
+
+            if temp_mh > mh:
+                mh = temp_mh
+
+        for row in range(3): #checking how many placed bloks in danger zone
+            for blk in self.observation_space[row]:
+                if blk == 1:
+                    in_dz += 1
+
+        #reward = (-0.55 * ah) + (-0.4 * hol) + (-0.7 * mh) + (-0.35 * bump) + (-3 * in_dz) + (0.1 * self.temp_score) + (2 * lc)
+        reward = (0.76 *lc) + (-0.37 * hol) + (-0.18 * bump) + (-0.51 * ah)
         return reward
 
         
@@ -256,13 +276,17 @@ class CustomEnv(gym.Env, Tetramino):
                     self.dropped = True
   
   def place_tet(self):
-        self.wipe_old_tet_position()
+        self.temp_score = 0
         blocks = self.get_current_tet_coords(self.rotation)
         for block in blocks:
                 y, x = block
                 y += self.y_move
                 x += self.x_move
-                self.observation_space[y][x] = 1 
+                self.observation_space[y][x] = 1
+        lc = self.clear_line()
+        self.get_score(lc, self.last_move)
+        self.wipe_old_tet_position()
+        return lc
     
   def update_state(self):
         self.wipe_old_tet_position()
@@ -302,15 +326,15 @@ class CustomEnv(gym.Env, Tetramino):
             scores = [40, 100, 300, 1200]
           
             if lines_cleared > 0:
-                self.score += scores[lines_cleared - 1] * (self.level + 1)
+                self.temp_score += scores[lines_cleared - 1] * (self.level + 1)
                 
             if action == 0:
-                self.score += 2 * self.rows_dropped_tr
-                self.score += self.rows_dropped_tr
+                self.temp_score += 2 * self.rows_dropped_tr
+                self.temp_score += self.rows_dropped_tr
                 
             else:
-                self.score += self.rows_dropped_tr
-            
+                self.temp_score   += self.rows_dropped_tr
+            self.score += self.temp_score   
     
   def update_level(self):
         if self.total_lines_cleared >= 10:

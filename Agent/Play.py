@@ -1,11 +1,12 @@
 from TetAgent import *
+import time
 
 num_episodes = int(input("Number of epidodes: \n"))
 Will_train = input("Train Y/N: \n").upper()
 Speed = (100 - int(input("speed 0-100: \n"))) / 100
 
-policy_net = torch.load('nets/policy_net.ckpt')
-target_net = torch.load('nets/target_net.ckpt')
+policy_net = torch.load('Nets/policy_net.ckpt')
+target_net = torch.load('Nets/target_net.ckpt')
 
 if Will_train == "Y":
     Will_train = True
@@ -55,7 +56,7 @@ for i_episode in range(num_episodes):
     
 print('Complete')
 
-torch.save(policy_net, 'nets/policy_net.ckpt')
-torch.save(target_net, 'nets/target_net.ckpt')
+torch.save(policy_net, 'Nets/policy_net.ckpt')
+torch.save(target_net, 'Nets/target_net.ckpt')
 
 env.close()
