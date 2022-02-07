@@ -27,6 +27,7 @@ n_actions = env.action_space.n
 #deffine NNs and load last saved point
 policy_net = torch.load('Nets2/policy_net2.ckpt')
 target_net = torch.load('Nets2/target_net2.ckpt')
+#
 #policy_net = DQN().to(device) 
 #target_net = DQN().to(device)
 #torch.save(policy_net, 'Nets2/policy_net2.ckpt')

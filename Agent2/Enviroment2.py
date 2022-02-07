@@ -150,6 +150,7 @@ class CustomEnv(gym.Env, Tetramino):
         in_dz = 0 #how many placed bloxs in danger zone (top three lines)
         bump = 0 #bumpyness (diff between each row)
         last_h = 0
+        term = 0
 
         for column in range(10): # calculates the aggragte height of each column, to be minamizd 
             temp_mh = 0
@@ -180,9 +181,10 @@ class CustomEnv(gym.Env, Tetramino):
             for blk in self.observation_space[row]:
                 if blk == 1:
                     in_dz += 1
-
+        if not self.playing:
+            term = -150
         #reward = (-0.55 * ah) + (-0.4 * hol) + (-0.7 * mh) + (-0.35 * bump) + (-3 * in_dz) + (0.1 * self.temp_score) + (2 * lc)
-        reward = (0.76 *lc) + (-0.37 * hol) + (-0.18 * bump) + (-0.51 * ah)
+        reward = (0.76 *lc) + (-0.37 * hol) + (-0.18 * bump) + (-0.51 * ah) + term
         return reward
 
         
@@ -332,11 +334,11 @@ class CustomEnv(gym.Env, Tetramino):
                 self.temp_score += scores[lines_cleared - 1] * (self.level + 1)
                 
             if action == 0:
-                self.temp_score += 2 * self.rows_dropped_tr
-                self.temp_score += self.rows_dropped_tr
+                self.temp_score += 2 * self.y_move
+                self.temp_score += self.y_move
                 
             else:
-                self.temp_score   += self.rows_dropped_tr
+                self.temp_score += self.y_move
             self.score += self.temp_score   
     
   def update_level(self):

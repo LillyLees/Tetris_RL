@@ -2,7 +2,7 @@ from TetAgent2 import *
 import tqdm
 import wandb
 
-wandb.init(project="Tetris-RL", entity="forestlees")
+wandb.init(project="Tetris-RL-Ag2", entity="forestlees")
 
 wandb.config = { #configuring wandb graph
   "learning_rate": 0.001,
