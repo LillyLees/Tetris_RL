@@ -13,5 +13,4 @@ Agent2 hasxavier_uniform NN weighting and default 0.05 learning rate.
 Takes top four rows of placed tets and current tet as game state. 
 before learning rate and weighting changed seems to reach platue, not clearing lines
 
-not re trined yet
 reward = (0.76 *lc) + (-0.37 * hol) + (-0.18 * bump) + (-0.51 * ah) + if is terminal (-100)
