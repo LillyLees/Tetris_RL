@@ -9,7 +9,7 @@ Takes whole board and current tet as game state.
 Loss reaches near convergence, game play dosent mesurably imporove. 
 reward = (0.76 *lc) + (-0.37 * hol) + (-0.18 * bump) + (-0.51 * ah)
 
-Agent2 hasxavier_uniform NN weighting and default 0.05 learning rate.
+Agent2 has xavier_uniform NN initialization and  0.05 learning rate.
 Takes top four rows of placed tets and current tet as game state. 
 before learning rate and weighting changed seems to reach platue, not clearing lines
 
